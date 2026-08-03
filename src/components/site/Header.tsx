@@ -36,7 +36,7 @@ export function Header() {
           </span>
           <span className="min-w-0">
             <span
-              className={`block truncate font-display text-base font-800 leading-tight sm:text-lg ${
+              className={`block truncate font-display text-base font-extrabold leading-tight sm:text-lg ${
                 scrolled ? "text-foreground" : "text-primary-foreground"
               }`}
             >
@@ -57,7 +57,7 @@ export function Header() {
             <a
               key={l.href}
               href={l.href}
-              className={`text-sm font-600 transition-colors hover:text-gold ${
+              className={`text-sm font-semibold transition-colors hover:text-gold ${
                 scrolled ? "text-foreground" : "text-primary-foreground"
               }`}
             >
@@ -66,7 +66,7 @@ export function Header() {
           ))}
           <a
             href="#contacto"
-            className="rounded-full bg-gold px-5 py-2.5 text-sm font-700 text-navy-deep shadow-[0_8px_24px_-10px_rgba(180,140,40,0.9)] transition-transform hover:-translate-y-0.5"
+            className="rounded-full bg-gold px-5 py-2.5 text-sm font-bold text-navy-deep shadow-[0_8px_24px_-10px_rgba(180,140,40,0.9)] transition-transform hover:-translate-y-0.5"
           >
             Solicitar presupuesto
           </a>
@@ -94,7 +94,7 @@ export function Header() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-2 py-3 text-sm font-600 text-foreground hover:bg-secondary"
+                className="rounded-lg px-2 py-3 text-sm font-semibold text-foreground hover:bg-secondary"
               >
                 {l.label}
               </a>
@@ -103,7 +103,7 @@ export function Header() {
               href={CONTACT.whatsapp}
               target="_blank"
               rel="noreferrer"
-              className="mt-2 rounded-full bg-gold px-5 py-3 text-center text-sm font-700 text-navy-deep"
+              className="mt-2 rounded-full bg-gold px-5 py-3 text-center text-sm font-bold text-navy-deep"
             >
               Solicitar presupuesto
             </a>
