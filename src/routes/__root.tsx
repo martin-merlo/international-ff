@@ -84,15 +84,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Mudanzas internacionales puerta a puerta, logistica de cargas y despachos de aduana desde Mendoza, Argentina. Mas de 30 anos de experiencia.",
       },
       { name: "author", content: "International Freight Forwarder" },
-      { property: "og:title", content: "International Freight Forwarder" },
+      { property: "og:title", content: "International Freight Forwarder | Mudanzas y Comercio Exterior" },
       {
         property: "og:description",
         content:
-          "Mudanzas internacionales, comercio exterior y agente de cargas con mas de 30 anos de trayectoria.",
+          "Mudanzas internacionales puerta a puerta, logistica de cargas y despachos de aduana desde Mendoza, Argentina. Mas de 30 anos de experiencia.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "International Freight Forwarder | Mudanzas y Comercio Exterior" },
+      { name: "twitter:description", content: "Mudanzas internacionales puerta a puerta, logistica de cargas y despachos de aduana desde Mendoza, Argentina. Mas de 30 anos de experiencia." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2ca8aab6-54ce-4f3b-8ff6-cabcf66eb268/id-preview-538e6822--375ce47f-9882-4091-9112-d1e818e5129b.lovable.app-1785785556231.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2ca8aab6-54ce-4f3b-8ff6-cabcf66eb268/id-preview-538e6822--375ce47f-9882-4091-9112-d1e818e5129b.lovable.app-1785785556231.png" },
     ],
     links: [
       {
