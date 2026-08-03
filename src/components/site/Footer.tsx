@@ -1,0 +1,85 @@
+import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Ship } from "lucide-react";
+import { CONTACT } from "./data";
+
+export function Footer() {
+  return (
+    <footer className="bg-navy-deep pb-10 pt-16">
+      <div className="container-x grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr]">
+        <div>
+          <div className="flex items-center gap-3">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gold text-navy-deep">
+              <Ship className="h-6 w-6" strokeWidth={2.2} />
+            </span>
+            <span className="font-display text-lg font-extrabold text-primary-foreground">
+              International Freight Forwarder
+            </span>
+          </div>
+          <p className="mt-5 max-w-md text-sm leading-relaxed text-primary-foreground/75">
+            Mudanzas internacionales, comercio exterior y agente de cargas. Oficina central en
+            Mendoza, Argentina, con oficinas asociadas en el resto del mundo.
+          </p>
+          <div className="mt-6 flex gap-3">
+            {[Facebook, Instagram, Linkedin].map((Icon, i) => (
+              <a
+                key={i}
+                href="#inicio"
+                aria-label="Red social"
+                className="grid h-10 w-10 place-items-center rounded-full border border-primary-foreground/25 text-primary-foreground transition-colors hover:border-gold hover:text-gold"
+              >
+                <Icon className="h-4 w-4" />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-widest text-gold">Enlaces</h3>
+          <ul className="mt-5 space-y-3 text-sm text-primary-foreground/80">
+            {[
+              ["#inicio", "Inicio"],
+              ["#servicios", "Servicios"],
+              ["#nosotros", "Nosotros"],
+              ["#testimonios", "Testimonios"],
+              ["#contacto", "Contacto"],
+            ].map(([href, label]) => (
+              <li key={href}>
+                <a href={href} className="hover:text-gold">
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-widest text-gold">Contacto</h3>
+          <ul className="mt-5 space-y-3 text-sm text-primary-foreground/80">
+            <li className="flex gap-3">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+              {CONTACT.address}
+            </li>
+            <li className="flex gap-3">
+              <Phone className="h-4 w-4 shrink-0 text-gold" />
+              <a href={`tel:${CONTACT.phoneHref}`} className="hover:text-gold">
+                {CONTACT.phone}
+              </a>
+            </li>
+            <li className="flex gap-3">
+              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+              <a href={`mailto:${CONTACT.email}`} className="break-all hover:text-gold">
+                {CONTACT.email}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="container-x mt-12 border-t border-primary-foreground/15 pt-6">
+        <p className="text-xs text-primary-foreground/60">
+          © {new Date().getFullYear()} International Freight Forwarder. Todos los derechos
+          reservados.
+        </p>
+      </div>
+    </footer>
+  );
+}
