@@ -61,11 +61,11 @@ export const STEPS = [
   },
   {
     title: "Planificación",
-    text: "Elaboramos el presupuesto y el plan logistico: modalidad aérea, maritima o terrestre, plazos y costos.",
+    text: "Elaboramos el presupuesto y el plan logístico: modalidad aérea, marítima o terrestre, plazos y costos.",
   },
   {
     title: "Documentación",
-    text: "Gestionamos permisos, despachos de aduana y toda la documentacion en origen y destino.",
+    text: "Gestionamos permisos, despachos de aduana y toda la documentación en origen y destino.",
   },
   {
     title: "Entrega",
@@ -75,21 +75,33 @@ export const STEPS = [
 
 export const TESTIMONIALS = [
   {
-    name: "Laura Gimenez",
-    role: "Mudanza Mendoza - Madrid",
+    name: "Alejandro E.",
+    role: "Barcelona, España",
     quote:
-      "Nos mudamos con toda la casa a Espana y no tuvimos una sola sorpresa. Explicaron cada paso y todo llego en perfecto estado.",
+      "Tuvimos que mudarnos con muy poco tiempo de preparación y elegimos IFF por recomendación de un amigo. Fue una decisión acertada.",
   },
   {
-    name: "Ricardo Peralta",
-    role: "Bodega exportadora, Luján de Cuyo",
+    name: "Tomás M.",
+    role: "Dallas, TX",
     quote:
-      "Exportamos de forma regular y su equipo resuelve la parte aduanera con una prolijidad que no habiamos encontrado antes.",
+      "Muy buena comunicación y experiencia en general. El container llegó más tarde de lo previsto pero por cuestiones climáticas.",
   },
   {
-    name: "Sofia Andrade",
-    role: "Importación de maquinaria",
+    name: "Sofía G.",
+    role: "Miami, Florida",
     quote:
-      "Trato personal, respuestas rapidas y precios claros. Se nota la experiencia de una empresa familiar con decadas en el rubro.",
+      "Mi negocio ha prosperado gracias a que puedo comercializar mis productos afuera del país. La decisión de contratar los servicios de IFF fue correcta.",
+  },
+  {
+    name: "Carla V.",
+    role: "New York, USA",
+    quote:
+      "Me recomendaron esta compañía y debo decir que estoy muy satisfecha con los servicios prestados, cumplieron en todo lo prometido.",
+  },
+  {
+    name: "Javier",
+    role: "DFW Logistics",
+    quote:
+      "Hemos podido establecer una relación a largo plazo con IFF y sus servicios son cruciales para nuestra compañía.",
   },
 ];
