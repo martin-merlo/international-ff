@@ -74,7 +74,7 @@ export function Header() {
 
         <button
           type="button"
-          aria-label="Abrir menu"
+          aria-label="Abrir menú"
           onClick={() => setOpen((v) => !v)}
           className={`grid h-11 w-11 place-items-center rounded-xl border lg:hidden ${
             scrolled

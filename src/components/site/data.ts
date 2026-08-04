@@ -18,7 +18,7 @@ export const SERVICES = [
   {
     title: "Mudanzas Internacionales",
     image: moving,
-    text: "Mudanzas puerta a puerta desde y hacia cualquier lugar del mundo, a traves de nuestros representantes internacionales. Nos encargamos de todos los detalles, incluidas las mudanzas corporativas.",
+    text: "Mudanzas puerta a puerta desde y hacia cualquier lugar del mundo, a través de nuestros representantes internacionales. Nos encargamos de todos los detalles, incluidas las mudanzas corporativas.",
     points: [
       "Servicio puerta a puerta",
       "Embalaje y manejo de efectos personales",
@@ -28,43 +28,43 @@ export const SERVICES = [
   {
     title: "Comercio Exterior",
     image: customs,
-    text: "Amplia variedad de productos e instrumentos financieros y de logistica en comercio internacional para atender las necesidades locales y globales de nuestros clientes.",
+    text: "Amplia variedad de productos e instrumentos financieros y de logística en comercio internacional para atender las necesidades locales y globales de nuestros clientes.",
     points: [
-      "Importacion y exportacion de mercaderias",
-      "Inscriptos en Direccion Nacional de Aduanas",
-      "Gestiones dentro y fuera del pais",
+      "Importación y exportación de mercaderías",
+      "Inscriptos en Dirección Nacional de Aduanas",
+      "Gestiones dentro y fuera del país",
     ],
   },
   {
     title: "Agente de Cargas",
     image: freight,
-    text: "Somos despachantes de aduana en Mendoza, Argentina. Lo asesoramos en todos los aspectos tecnicos, operativos y juridicos que conforman el universo normativo aduanero.",
+    text: "Somos despachantes de aduana en Mendoza, Argentina. Lo asesoramos en todos los aspectos técnicos, operativos y jurídicos que conforman el universo normativo aduanero.",
     points: [
       "Cargas full y parciales LCL",
       "Servicio multimodal aire, tierra y mar",
-      "Envio de muestras courier a todo el mundo",
+      "Envío de muestras courier a todo el mundo",
     ],
   },
 ];
 
 export const STATS = [
-  { value: 30, suffix: "+", label: "Anos de experiencia" },
-  { value: 90, suffix: "+", label: "Paises con cobertura" },
-  { value: 5000, suffix: "+", label: "Envios realizados" },
+  { value: 30, suffix: "+", label: "Años de experiencia" },
+  { value: 90, suffix: "+", label: "Países con cobertura" },
+  { value: 5000, suffix: "+", label: "Envíos realizados" },
   { value: 98, suffix: "%", label: "Clientes satisfechos" },
 ];
 
 export const STEPS = [
   {
     title: "Contacto",
-    text: "Nos cuenta que necesita enviar o mudar. Escuchamos su caso y definimos el alcance del servicio.",
+    text: "Nos cuenta qué necesita enviar o mudar. Escuchamos su caso y definimos el alcance del servicio.",
   },
   {
-    title: "Planificacion",
-    text: "Elaboramos el presupuesto y el plan logistico: modalidad aerea, maritima o terrestre, plazos y costos.",
+    title: "Planificación",
+    text: "Elaboramos el presupuesto y el plan logistico: modalidad aérea, maritima o terrestre, plazos y costos.",
   },
   {
-    title: "Documentacion",
+    title: "Documentación",
     text: "Gestionamos permisos, despachos de aduana y toda la documentacion en origen y destino.",
   },
   {
@@ -82,13 +82,13 @@ export const TESTIMONIALS = [
   },
   {
     name: "Ricardo Peralta",
-    role: "Bodega exportadora, Lujan de Cuyo",
+    role: "Bodega exportadora, Luján de Cuyo",
     quote:
       "Exportamos de forma regular y su equipo resuelve la parte aduanera con una prolijidad que no habiamos encontrado antes.",
   },
   {
     name: "Sofia Andrade",
-    role: "Importacion de maquinaria",
+    role: "Importación de maquinaria",
     quote:
       "Trato personal, respuestas rapidas y precios claros. Se nota la experiencia de una empresa familiar con decadas en el rubro.",
   },

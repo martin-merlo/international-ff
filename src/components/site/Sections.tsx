@@ -85,9 +85,9 @@ export function Hero() {
             Servicio puerta a puerta a cualquier lugar del mundo
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-primary-foreground/90">
-            30 anos de servicio avalan nuestra capacidad y honestidad para que su mudanza
-            internacional sea sin sorpresas ni sobresaltos. Logistica de cargas nacional e
-            internacional, importacion y exportacion de mercaderias.
+            30 años de servicio avalan nuestra capacidad y honestidad para que su mudanza
+            internacional sea sin sorpresas ni sobresaltos. Logística de cargas nacional e
+            internacional, importación y exportación de mercaderías.
           </p>
           <div className="mt-9 flex flex-wrap gap-4">
             <a
@@ -106,7 +106,7 @@ export function Hero() {
             </a>
           </div>
           <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm text-primary-foreground/85">
-            {["Aereo, maritimo y terrestre", "Despachantes de aduana", "Red global de agentes"].map(
+            {["Aéreo, marítimo y terrestre", "Despachantes de aduana", "Red global de agentes"].map(
               (t) => (
                 <span key={t} className="inline-flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-gold" /> {t}
@@ -144,11 +144,11 @@ export function Services() {
       <div className="container-x">
         <p className="eyebrow text-navy-soft">Nuestros servicios</p>
         <h2 className="mt-4 max-w-2xl text-3xl font-extrabold text-foreground sm:text-5xl">
-          Soluciones completas de logistica internacional
+          Soluciones completas de logística internacional
         </h2>
         <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-          Confie sus bienes en nosotros por cualquier medio: aereo, maritimo o terrestre. Mas de
-          30 anos de experiencia avalan nuestra trayectoria.
+          Confíe sus bienes en nosotros por cualquier medio: aéreo, marítimo o terrestre. Mas de
+          30 años de experiencia avalan nuestra trayectoria.
         </p>
 
         <div className="mt-14 grid gap-8 lg:grid-cols-3">
@@ -194,7 +194,7 @@ export function About() {
         <div className="overflow-hidden rounded-3xl shadow-[0_40px_80px_-50px_rgba(15,23,42,0.8)]">
           <img
             src={warehouse}
-            alt="Operacion logistica en deposito"
+            alt="Operación logística en depósito"
             loading="lazy"
             width={1400}
             height={900}
@@ -202,25 +202,25 @@ export function About() {
           />
         </div>
         <div>
-          <p className="eyebrow text-navy-soft">Quienes somos</p>
+          <p className="eyebrow text-navy-soft">Quiénes somos</p>
           <h2 className="mt-4 text-3xl font-extrabold text-foreground sm:text-4xl">
             Una empresa familiar a su servicio
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-            Somos una empresa con vasta experiencia en todo tipo de cargas y con interes total por
-            la satisfaccion de nuestros clientes. Nuestra trayectoria se remonta a la primera
-            generacion de la familia: Don Juan Alfredo Motta, junto a la Compania Sudamericana de
-            Vapores, fue pionero en la salida de cargas via Oceano Pacifico.
+            Somos una empresa con vasta experiencia en todo tipo de cargas y con interés total por
+            la satisfacción de nuestros clientes. Nuestra trayectoria se remonta a la primera
+            generación de la familia: Don Juan Alfredo Motta, junto a la Compañía Sudamericana de
+            Vapores, fue pionero en la salida de cargas vía Océano Pacifico.
           </p>
           <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-            Entendemos que cada carga implica la posibilidad de nuevos negocios y la realizacion de
-            anhelos y suenos. Por eso ofrecemos un servicio comodo, seguro, eficaz y agil, con
+            Entendemos que cada carga implica la posibilidad de nuevos negocios y la realización de
+            anhelos y sueños. Por eso ofrecemos un servicio cómodo, seguro, eficaz y ágil, con
             trato personal en cada tema concerniente a su carga.
           </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {[
-              { icon: Clock, t: "Nuestra historia", d: "Mas de 30 anos de trayectoria." },
-              { icon: Handshake, t: "Nuestra filosofia", d: "Ganarnos su confianza cada dia." },
+              { icon: Clock, t: "Nuestra historia", d: "Mas de 30 años de trayectoria." },
+              { icon: Handshake, t: "Nuestra filosofía", d: "Ganarnos su confianza cada día." },
               { icon: Package, t: "Nuestro compromiso", d: "Su carga, en tiempo y forma." },
             ].map((c) => (
               <div key={c.t} className="rounded-2xl border border-border bg-card p-5">
@@ -240,7 +240,7 @@ export function Process() {
   return (
     <section className="bg-background py-24">
       <div className="container-x">
-        <p className="eyebrow text-navy-soft">Como trabajamos</p>
+        <p className="eyebrow text-navy-soft">Cómo trabajamos</p>
         <h2 className="mt-4 text-3xl font-extrabold text-foreground sm:text-5xl">
           Cuatro pasos, cero sorpresas
         </h2>
@@ -267,19 +267,19 @@ export function Process() {
 
 export function WhyUs() {
   const items = [
-    { icon: Award, t: "30 anos de trayectoria", d: "Miles de mudanzas internacionales realizadas." },
+    { icon: Award, t: "30 años de trayectoria", d: "Miles de mudanzas internacionales realizadas." },
     { icon: Globe2, t: "Red internacional", d: "Oficina central en Mendoza y agentes asociados en el resto del mundo." },
-    { icon: ShieldCheck, t: "Marco aduanero", d: "Asesoramiento tecnico, operativo y juridico en todo el proceso." },
-    { icon: Users, t: "Trato personal", d: "Empresa familiar con dedicacion especial en cada carga." },
-    { icon: FileText, t: "Sin cargos imprevistos", d: "Presupuestos claros y planificacion anticipada." },
+    { icon: ShieldCheck, t: "Marco aduanero", d: "Asesoramiento técnico, operativo y jurídico en todo el proceso." },
+    { icon: Users, t: "Trato personal", d: "Empresa familiar con dedicación especial en cada carga." },
+    { icon: FileText, t: "Sin cargos imprevistos", d: "Presupuestos claros y planificación anticipada." },
     { icon: Package, t: "Multimodal", d: "Aire, tierra y mar, cargas full y parciales LCL." },
   ];
   return (
     <section className="bg-navy py-24">
       <div className="container-x">
-        <p className="eyebrow text-gold">Por que elegirnos</p>
+        <p className="eyebrow text-gold">Por qué elegirnos</p>
         <h2 className="mt-4 max-w-2xl text-3xl font-extrabold text-primary-foreground sm:text-5xl">
-          Experiencia comprobable en cada envio
+          Experiencia comprobable en cada envío
         </h2>
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.map((i) => (
@@ -347,10 +347,10 @@ export function CtaBand() {
       <div className="absolute inset-0 -z-10 bg-[oklch(0.21_0.062_258/0.9)]" />
       <div className="container-x py-24 text-center">
         <h2 className="mx-auto max-w-3xl text-3xl font-extrabold text-primary-foreground sm:text-5xl">
-          Contactenos y le responderemos a la brevedad posible
+          Contáctenos y le responderemos a la brevedad posible
         </h2>
         <p className="mx-auto mt-5 max-w-2xl text-lg text-primary-foreground/85">
-          Pida un presupuesto para su mudanza internacional u operacion de comercio exterior y lo
+          Pida un presupuesto para su mudanza internacional u operación de comercio exterior y lo
           asesoraremos con gusto.
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-4">
@@ -379,9 +379,9 @@ export function Contact() {
       <div className="container-x grid gap-12 lg:grid-cols-2">
         <div>
           <p className="eyebrow text-navy-soft">Contacto</p>
-          <h2 className="mt-4 text-3xl font-extrabold text-foreground sm:text-4xl">Contactenos</h2>
+          <h2 className="mt-4 text-3xl font-extrabold text-foreground sm:text-4xl">Contáctenos</h2>
           <p className="mt-5 text-lg text-muted-foreground">
-            Escribanos por cualquier necesidad de servicio de mudanzas o comercio exterior y
+            Escríbanos por cualquier necesidad de servicio de mudanzas o comercio exterior y
             responderemos a la brevedad posible.
           </p>
 
@@ -416,7 +416,7 @@ export function Contact() {
 
           <div className="mt-6 overflow-hidden rounded-2xl border border-border">
             <iframe
-              title="Ubicacion de la oficina en Mendoza"
+              title="Ubicación de la oficina en Mendoza"
               src="https://www.google.com/maps?q=Moreno%203350%20Mendoza%20Argentina&output=embed"
               className="h-72 w-full"
               loading="lazy"
@@ -436,7 +436,7 @@ export function Contact() {
             {[
               { id: "nombre", label: "Nombre y apellido", type: "text" },
               { id: "email", label: "Email", type: "email" },
-              { id: "telefono", label: "Telefono", type: "tel" },
+              { id: "telefono", label: "Teléfono", type: "tel" },
             ].map((f) => (
               <div key={f.id}>
                 <label htmlFor={f.id} className="text-sm font-semibold text-foreground">
