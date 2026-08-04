@@ -5,6 +5,7 @@ import customs from "@/assets/service-customs.jpg";
 export const CONTACT = {
   phone: "+54 9 261 506-3034",
   phoneHref: "+5492615063034",
+  whatsappNumber: "5492615063034",
   whatsapp:
     "https://wa.me/5492615063034?text=Hola%2C%20quisiera%20solicitar%20un%20presupuesto",
   email: "jmotta@internationalff.com",
