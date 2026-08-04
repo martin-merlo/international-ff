@@ -1,5 +1,6 @@
-import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Ship } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { CONTACT } from "./data";
+import logo from "@/assets/logo-iff.png.asset.json";
 
 export function Footer() {
   return (
@@ -7,9 +8,14 @@ export function Footer() {
       <div className="container-x grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <div className="flex items-center gap-3">
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gold text-navy-deep">
-              <Ship className="h-6 w-6" strokeWidth={2.2} />
-            </span>
+            <img
+              src={logo.url}
+              alt="International Freight Forwarder"
+              width={56}
+              height={56}
+              loading="lazy"
+              className="h-14 w-14 shrink-0 rounded-full object-contain"
+            />
             <span className="font-display text-lg font-extrabold text-primary-foreground">
               International Freight Forwarder
             </span>

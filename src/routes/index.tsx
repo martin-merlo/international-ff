@@ -16,7 +16,7 @@ import {
 
 const TITLE = "Mudanzas Internacionales y Comercio Exterior | Mendoza";
 const DESC =
-  "Mudanzas internacionales puerta a puerta, logistica de cargas, importacion, exportacion y despachos de aduana. Mas de 30 anos de experiencia en Mendoza, Argentina.";
+  "Mudanzas internacionales puerta a puerta, logística de cargas, importación, exportación y despachos de aduana. Mas de 30 años de experiencia en Mendoza, Argentina.";
 
 export const Route = createFileRoute("/")({
   head: () => ({

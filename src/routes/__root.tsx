@@ -81,20 +81,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Mudanzas internacionales puerta a puerta, logistica de cargas y despachos de aduana desde Mendoza, Argentina. Mas de 30 anos de experiencia.",
+          "Mudanzas internacionales puerta a puerta, logística de cargas y despachos de aduana desde Mendoza, Argentina. Mas de 30 años de experiencia.",
       },
       { name: "author", content: "International Freight Forwarder" },
       { property: "og:title", content: "International Freight Forwarder | Mudanzas y Comercio Exterior" },
       {
         property: "og:description",
         content:
-          "Mudanzas internacionales puerta a puerta, logistica de cargas y despachos de aduana desde Mendoza, Argentina. Mas de 30 anos de experiencia.",
+          "Mudanzas internacionales puerta a puerta, logística de cargas y despachos de aduana desde Mendoza, Argentina. Mas de 30 años de experiencia.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "International Freight Forwarder | Mudanzas y Comercio Exterior" },
-      { name: "twitter:description", content: "Mudanzas internacionales puerta a puerta, logistica de cargas y despachos de aduana desde Mendoza, Argentina. Mas de 30 anos de experiencia." },
+      { name: "twitter:description", content: "Mudanzas internacionales puerta a puerta, logística de cargas y despachos de aduana desde Mendoza, Argentina. Mas de 30 años de experiencia." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2ca8aab6-54ce-4f3b-8ff6-cabcf66eb268/id-preview-538e6822--375ce47f-9882-4091-9112-d1e818e5129b.lovable.app-1785785556231.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2ca8aab6-54ce-4f3b-8ff6-cabcf66eb268/id-preview-538e6822--375ce47f-9882-4091-9112-d1e818e5129b.lovable.app-1785785556231.png" },
     ],
@@ -109,7 +109,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,
