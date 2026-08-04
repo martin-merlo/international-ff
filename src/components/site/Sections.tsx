@@ -427,6 +427,33 @@ export function Contact() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            const val = (k: string, max: number) =>
+              String(fd.get(k) ?? "")
+                .trim()
+                .slice(0, max);
+            const nombre = val("nombre", 100);
+            const email = val("email", 255);
+            const telefono = val("telefono", 40);
+            const servicio = val("servicio", 120);
+            const mensaje = val("mensaje", 1000);
+            const texto = [
+              "Hola IFF, quisiera solicitar un presupuesto.",
+              "",
+              `Nombre: ${nombre}`,
+              `Email: ${email}`,
+              telefono ? `Teléfono: ${telefono}` : null,
+              `Servicio: ${servicio}`,
+              "",
+              `Mensaje: ${mensaje}`,
+            ]
+              .filter(Boolean)
+              .join("\n");
+            window.open(
+              `https://wa.me/${CONTACT.whatsappNumber}?text=${encodeURIComponent(texto)}`,
+              "_blank",
+              "noopener,noreferrer",
+            );
             setSent(true);
           }}
           className="h-fit rounded-3xl bg-card p-8 shadow-[0_30px_70px_-50px_rgba(15,23,42,0.8)]"
@@ -444,7 +471,9 @@ export function Contact() {
                 </label>
                 <input
                   id={f.id}
+                  name={f.id}
                   type={f.type}
+                  maxLength={f.id === "email" ? 255 : 100}
                   required={f.id !== "telefono"}
                   className="mt-2 w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-navy focus:ring-2 focus:ring-navy/20"
                 />
@@ -456,6 +485,7 @@ export function Contact() {
               </label>
               <select
                 id="servicio"
+                name="servicio"
                 className="mt-2 w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-navy focus:ring-2 focus:ring-navy/20"
               >
                 {SERVICES.map((s) => (
@@ -469,7 +499,9 @@ export function Contact() {
               </label>
               <textarea
                 id="mensaje"
+                name="mensaje"
                 rows={4}
+                maxLength={1000}
                 required
                 className="mt-2 w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-navy focus:ring-2 focus:ring-navy/20"
               />
@@ -483,7 +515,8 @@ export function Contact() {
           </button>
           {sent && (
             <p className="mt-4 text-center text-sm font-semibold text-navy">
-              Gracias por su consulta. Nos comunicaremos a la brevedad.
+              Abrimos WhatsApp con su consulta lista para enviar. Si no se abrió, use el botón de
+              abajo.
             </p>
           )}
           <a
