@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Menu, X, Ship } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { CONTACT } from "./data";
+import logo from "@/assets/logo-iff.png.asset.json";
 
 const LINKS = [
   { href: "#inicio", label: "Inicio" },
@@ -31,9 +32,13 @@ export function Header() {
     >
       <div className="container-x grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-4">
         <a href="#inicio" className="flex min-w-0 items-center gap-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gold text-navy-deep">
-            <Ship className="h-6 w-6" strokeWidth={2.2} />
-          </span>
+          <img
+            src={logo.url}
+            alt="International Freight Forwarder"
+            width={56}
+            height={56}
+            className="h-12 w-12 shrink-0 rounded-full object-contain sm:h-14 sm:w-14"
+          />
           <span className="min-w-0">
             <span
               className={`block truncate font-display text-base font-extrabold leading-tight sm:text-lg ${
