@@ -61,7 +61,7 @@ export function Footer() {
             {OPERATORS.map((op) => (
               <li
                 key={op.name}
-                className="grid h-16 place-items-center overflow-hidden rounded-lg bg-primary-foreground p-1.5"
+                className="flex h-16 items-center justify-center overflow-hidden rounded-lg bg-primary-foreground p-2"
               >
                 <img
                   src={op.src}
@@ -69,7 +69,7 @@ export function Footer() {
                   width={96}
                   height={96}
                   loading="lazy"
-                  className="h-full w-full object-contain"
+                  className="max-h-full max-w-full object-contain"
                 />
               </li>
             ))}
