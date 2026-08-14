@@ -1,6 +1,21 @@
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { CONTACT } from "./data";
 import logo from "@/assets/logo-iff.png.asset.json";
+import opItl from "@/assets/op-itl.png.asset.json";
+import opCcni from "@/assets/op-ccni.png.asset.json";
+import opDhl from "@/assets/op-dhl.png.asset.json";
+import opSomarco from "@/assets/op-somarco.png.asset.json";
+import opUps from "@/assets/op-ups.png.asset.json";
+import opMsc from "@/assets/op-msc.png.asset.json";
+
+const OPERATORS = [
+  { src: opItl.url, name: "International Trade Logistics" },
+  { src: opCcni.url, name: "CCNI" },
+  { src: opDhl.url, name: "DHL" },
+  { src: opSomarco.url, name: "Somarco" },
+  { src: opUps.url, name: "UPS" },
+  { src: opMsc.url, name: "MSC" },
+];
 
 export function Footer() {
   return (
@@ -43,19 +58,19 @@ export function Footer() {
             Red de operadores
           </h3>
           <ul className="mt-5 grid grid-cols-3 gap-2">
-            {[
-              "International Trade Logistics",
-              "CCNI",
-              "DHL",
-              "Somarco",
-              "UPS",
-              "MSC",
-            ].map((name) => (
+            {OPERATORS.map((op) => (
               <li
-                key={name}
-                className="grid h-14 place-items-center rounded-lg bg-primary-foreground px-2 text-center text-[10px] font-bold uppercase leading-tight tracking-wide text-navy-deep"
+                key={op.name}
+                className="grid h-16 place-items-center overflow-hidden rounded-lg bg-primary-foreground p-1.5"
               >
-                {name}
+                <img
+                  src={op.src}
+                  alt={`Logo ${op.name}`}
+                  width={96}
+                  height={96}
+                  loading="lazy"
+                  className="h-full w-full object-contain"
+                />
               </li>
             ))}
           </ul>
