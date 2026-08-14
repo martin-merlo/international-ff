@@ -39,19 +39,23 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-bold uppercase tracking-widest text-gold">Enlaces</h3>
-          <ul className="mt-5 space-y-3 text-sm text-primary-foreground/80">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-gold">
+            Red de operadores
+          </h3>
+          <ul className="mt-5 grid grid-cols-3 gap-2">
             {[
-              ["#inicio", "Inicio"],
-              ["#servicios", "Servicios"],
-              ["#nosotros", "Nosotros"],
-              ["#testimonios", "Testimonios"],
-              ["#contacto", "Contacto"],
-            ].map(([href, label]) => (
-              <li key={href}>
-                <a href={href} className="hover:text-gold">
-                  {label}
-                </a>
+              "International Trade Logistics",
+              "CCNI",
+              "DHL",
+              "Somarco",
+              "UPS",
+              "MSC",
+            ].map((name) => (
+              <li
+                key={name}
+                className="grid h-14 place-items-center rounded-lg bg-primary-foreground px-2 text-center text-[10px] font-bold uppercase leading-tight tracking-wide text-navy-deep"
+              >
+                {name}
               </li>
             ))}
           </ul>
