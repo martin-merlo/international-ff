@@ -61,15 +61,15 @@ export function Footer() {
             {OPERATORS.map((op) => (
               <li
                 key={op.name}
-                className="flex h-16 items-center justify-center overflow-hidden rounded-lg bg-primary-foreground p-2"
+                className="flex h-14 items-center justify-center overflow-hidden rounded-lg border border-primary-foreground/10 bg-primary-foreground/5 px-2 py-1 transition-colors hover:border-gold/40"
               >
                 <img
                   src={op.src}
                   alt={`Logo ${op.name}`}
-                  width={96}
-                  height={96}
+                  width={160}
+                  height={40}
                   loading="lazy"
-                  className="max-h-full max-w-full object-contain"
+                  className="max-h-9 w-auto max-w-full object-contain"
                 />
               </li>
             ))}
