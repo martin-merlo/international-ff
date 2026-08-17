@@ -57,19 +57,19 @@ export function Footer() {
           <h3 className="text-sm font-bold uppercase tracking-widest text-gold">
             Red de operadores
           </h3>
-          <ul className="mt-5 grid grid-cols-3 gap-2">
+          <ul className="mt-5 grid max-w-[210px] grid-cols-3 gap-2">
             {OPERATORS.map((op) => (
               <li
                 key={op.name}
-                className="flex h-14 items-center justify-center overflow-hidden rounded-lg border border-primary-foreground/10 bg-primary-foreground/5 px-2 py-1 transition-colors hover:border-gold/40"
+                className="overflow-hidden rounded-md"
               >
                 <img
                   src={op.src}
                   alt={`Logo ${op.name}`}
-                  width={160}
-                  height={40}
+                  width={66}
+                  height={66}
                   loading="lazy"
-                  className="max-h-9 w-auto max-w-full object-contain"
+                  className="block h-[66px] w-[66px] object-cover"
                 />
               </li>
             ))}
