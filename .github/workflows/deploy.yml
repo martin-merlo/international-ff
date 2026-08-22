@@ -1,1 +1,40 @@
+name: Deploy a HostGator
 
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # permite tirar un deploy manual desde GitHub sin necesidad de un push nuevo
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código del repo
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar el proyecto (build de producción)
+        run: npm run build
+        # OJO: confirmá el nombre de la carpeta de salida corriendo "npm run build" en tu máquina.
+        # Vite (lo que usa Lovable normalmente) genera "dist/". Si tu proyecto genera otra carpeta
+        # (por ejemplo "build/"), cambiá "local-dir" más abajo.
+
+      - name: Subir a HostGator por FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: /public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
