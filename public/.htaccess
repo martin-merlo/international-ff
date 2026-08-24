@@ -1,0 +1,25 @@
+# Landing de una sola página servida como estático.
+# Todo lo que no sea un archivo real cae en index.html.
+
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ /index.html [L]
+</IfModule>
+
+# Los assets llevan hash en el nombre: se pueden cachear de forma agresiva.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|mjs|css|woff2?|png|jpe?g|gif|svg|webp|avif|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

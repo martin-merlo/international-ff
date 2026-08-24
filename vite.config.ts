@@ -1,16 +1,12 @@
-// @lovable.dev/vite-tanstack-config already includes the following — do NOT add them manually
-// or the app will break with duplicate plugins:
-//   - TanStack devtools (dev-only, first), tanstackStart, viteReact, tailwindcss, tsConfigPaths,
-//     nitro (build-only using cloudflare as a default target), VITE_* env injection, @ path alias,
-//     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
-// You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
-import { loadEnv, type Plugin } from "vite";
+import { fileURLToPath } from "node:url";
 
-// og:image / twitter:image necesitan URL absoluta y se arman con VITE_SITE_URL
-// (ver src/routes/__root.tsx). Sin esa variable el sitio emitiría metadatos rotos,
-// así que el build se corta acá en vez de publicar HTML inválido. Solo aplica al
-// build: `vite dev` no lo necesita.
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig, loadEnv, type Plugin } from "vite";
+
+// og:image / twitter:image necesitan URL absoluta y se arman con %VITE_SITE_URL%
+// en index.html. Sin esa variable el sitio publicaría metadatos rotos, así que el
+// build se corta acá. Solo aplica al build: `vite dev` arranca sin ella.
 function requireSiteUrl(): Plugin {
   return {
     name: "require-site-url",
@@ -35,21 +31,14 @@ function requireSiteUrl(): Plugin {
   };
 }
 
-// STATIC_BUILD=1 (lo setea `npm run build:static`) cambia únicamente el preset de Nitro
-// a "node-server", para que .output/server/index.mjs sea ejecutable con node.
-// scripts/build-static.mjs levanta ese server, crawlea el sitio y guarda cada ruta
-// como HTML en dist/. No se usa el prerenderer de Nitro ni el modo SPA: el build es
-// un SSR normal, idéntico al de `npm run build` salvo por el preset.
-const isStaticBuild = process.env["STATIC_BUILD"] === "1";
-
+// SPA de una sola página (landing con anchors). El build estándar de Vite ya
+// produce dist/index.html + dist/assets/ con rutas absolutas, que es exactamente
+// lo que espera el hosting Apache/cPanel. No hace falta ningún paso extra.
 export default defineConfig({
-  tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this.
-    server: { entry: "server" },
-  },
-  ...(isStaticBuild ? { nitro: { preset: "node-server" } } : {}),
-  vite: {
-    plugins: [requireSiteUrl()],
+  plugins: [requireSiteUrl(), react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
   },
 });

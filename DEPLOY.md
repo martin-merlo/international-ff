@@ -1,7 +1,7 @@
 # Deploy estático en Apache / cPanel (HostGator)
 
 ```bash
-npm run build:static
+npm run build
 ```
 
 Genera `dist/` lista para subir por FTP o File Manager al `public_html` del hosting.
@@ -9,54 +9,48 @@ Incluir el `.htaccess` (es un archivo oculto: activá "mostrar archivos ocultos"
 
 ## Cómo funciona
 
-`npm run build:static` (ver [scripts/build-static.mjs](scripts/build-static.mjs)) hace:
+Es un **build estándar de Vite**, sin pasos extra: `vite build` toma `index.html` de la
+raíz, empaqueta la SPA y escribe `dist/index.html` + `dist/assets/`. Todo lo que está en
+`public/` (incluido el `.htaccess`, `favicon.png`, `robots.txt` y `images/`) se copia tal
+cual a `dist/`.
 
-1. `vite build` con `STATIC_BUILD=1`, que cambia el preset de Nitro a `node-server`.
-   Es un build SSR normal: mismo entry (`src/server.ts`), mismos assets. Lo único que
-   cambia respecto de `npm run build` (Cloudflare) es el preset.
-2. Levanta `.output/server/index.mjs` en un puerto libre de `127.0.0.1`.
-3. Crawlea desde `/` siguiendo solo links internos del mismo origen (ignora externos,
-   `mailto:`/`tel:`/anclas, archivos con extensión y rutas `/_*`).
-4. Copia `.output/public/*` a `dist/` y escribe encima el HTML renderizado de cada ruta.
-5. Baja el server, borra artefactos de otros hostings (`_headers`, `_routes.json`,
-   `_worker.js`) y escribe el `.htaccess`.
+No hay script de build custom, ni crawler, ni presets de Nitro, ni distinción entre build
+"normal" y "estático": el sitio es una landing de una sola página con navegación por
+anchors (`#inicio`, `#servicios`, `#nosotros`, `#testimonios`, `#contacto`), así que no
+necesita SSR ni router.
 
-No se usa el prerenderer de Nitro ni el modo SPA: con el preset `static` el build
-fallaba en la etapa final (`rolldownOptions.input should not be an html file when
-building for SSR`) y el crawler de Nitro devolvía 404 para `/`.
+> Historial: el proyecto venía de TanStack Start + Nitro y necesitaba
+> `scripts/build-static.mjs` (build SSR con preset `node-server` + crawl local) para
+> producir HTML estático. Esa infraestructura se eliminó al migrar a Vite + React puro.
 
-## Layout de salida: directory-index
+## Rutas y raíz del dominio
 
-| Ruta | Archivo |
-| --- | --- |
-| `/` | `dist/index.html` |
-| `/servicios` | `dist/servicios/index.html` |
-
-Elegido sobre `servicios.html` porque en Apache funciona sin reglas extra: `DirectoryIndex`
-resuelve el directorio, la URL queda limpia (sin `.html`), y anda igual con y sin barra
-final. Verificado también con `npx serve dist` (200 en `/ruta`, `/ruta/` y F5).
+El HTML referencia los assets con rutas **absolutas** (`/assets/...`, `/images/...`), así
+que el contenido de `dist/` va en la **raíz** del dominio. Si algún día tuviera que
+colgar de un subdirectorio, hay que setear `base` en [vite.config.ts](vite.config.ts).
 
 ## .htaccess
 
-Orden de las reglas:
+Vive en [public/.htaccess](public/.htaccess) y el build lo copia a `dist/`. Hace dos cosas:
 
-1. Archivos y directorios reales se sirven tal cual.
-2. `/<ruta>` con `dist/<ruta>/index.html` existente se sirve internamente, sin redirect.
-3. Cualquier otra ruta cae en `/index.html` y la resuelve el router en el cliente.
+1. Sirve archivos y directorios reales tal cual.
+2. Cualquier otra ruta cae en `/index.html`.
 
 Más `Cache-Control` inmutable para los assets con hash y `no-cache` para el HTML.
 
-## Rutas no linkeadas
+## Variables de entorno
 
-El crawler sale de `/`. Una página que no esté linkeada desde ningún lado hay que
-sembrarla a mano:
+`VITE_SITE_URL` es obligatoria para el build (ver la sección de og:image más abajo). Las
+`VITE_*` se hornean en el bundle del cliente: no pongas secretos ahí. Ver
+[.env.example](.env.example).
 
-```bash
-STATIC_ROUTES="/gracias,/legal" npm run build:static
-```
+## Una nota sobre SEO
 
-(En Git Bash sobre Windows anteponé `MSYS_NO_PATHCONV=1`, si no la shell convierte
-`/gracias` en una ruta de Windows.)
+El HTML que se publica es un shell: el contenido lo renderiza React en el cliente. Google
+ejecuta JavaScript y lo indexa igual, pero los previews de redes sociales y algunos
+crawlers más simples solo ven los metadatos del `<head>` (que sí están completos y
+estáticos). Si en algún momento hace falta HTML pre-renderizado, la opción menos invasiva
+es agregar un plugin de prerender al build de Vite.
 
 ## Imágenes: dependencia de Lovable cortada
 
@@ -86,14 +80,11 @@ La extracción la hizo [scripts/extract-lovable-assets.mjs](scripts/extract-lova
 un script de **un solo uso** que no está enganchado a ningún script de `package.json` y que
 no debe correr en un build: levanta el dev server con el proxy de assets de Lovable activo,
 baja cada imagen, valida que sea una imagen real (magic bytes + tamaño del manifiesto) y la
-guarda. Queda en el repo como registro de cómo se obtuvieron los binarios; para volver a
-usarlo hay que restaurar los `.asset.json` originales desde git.
+guarda. Queda en el repo como registro de cómo se obtuvieron los binarios.
 
-El plugin `@lovable.dev/vite-tanstack-config` **no** se sacó de `vite.config.ts`: el proxy de
-assets es solo uno de los doce plugins que registra (también monta tanstackStart, Nitro,
-React, Tailwind, tsconfig paths, devtools y los error loggers). Sacarlo rompe el build entero.
-Además el proxy ya es inerte por defecto: solo se activa si está definida
-`LOVABLE_PREVIEW_HOST`, cosa que no pasa en este repo.
+Ese script **ya no se puede correr tal cual**: su camino de proxy dependía del plugin
+`@lovable.dev/vite-tanstack-config`, que se eliminó al migrar a Vite puro. El camino de
+fetch directo (`--og <url>`) sigue sirviendo para bajar cualquier imagen suelta por URL.
 
 ### og:image y twitter:image
 
