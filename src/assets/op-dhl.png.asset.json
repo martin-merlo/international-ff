@@ -1,11 +1,7 @@
 {
   "version": 1,
-  "asset_id": "b527894b-7a7f-42ba-87a0-b0243a6a2038",
-  "project_id": "375ce47f-9882-4091-9112-d1e818e5129b",
-  "url": "/__l5e/assets-v1/b527894b-7a7f-42ba-87a0-b0243a6a2038/op-dhl.png",
-  "r2_key": "a/v1/375ce47f-9882-4091-9112-d1e818e5129b/b527894b-7a7f-42ba-87a0-b0243a6a2038/op-dhl.png",
+  "url": "/images/logo-dhl.png",
   "original_filename": "op-dhl.png",
   "size": 3768,
-  "content_type": "image/png",
-  "created_at": "2026-08-14T06:00:00Z"
+  "content_type": "image/png"
 }
