@@ -14,8 +14,8 @@ const isStaticBuild = process.env["STATIC_BUILD"] === "1";
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
-    server: { entry: "server" },
+    // nitro/vite builds from this. In static SPA mode the plugin manages its own
+    // prerender shell, so the custom server entry is left out.
     ...(isStaticBuild
       ? {
           spa: {
@@ -23,7 +23,7 @@ export default defineConfig({
             prerender: { enabled: true, crawlLinks: true, retryCount: 3 },
           },
         }
-      : {}),
+      : { server: { entry: "server" } }),
   },
   ...(isStaticBuild ? { nitro: { preset: "static" } } : {}),
 });
