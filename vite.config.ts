@@ -6,24 +6,18 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// STATIC_BUILD=1 (set by `npm run build:static`) switches the build to a 100%
-// static output for shared Apache/cPanel hosting: SPA mode with prerendered
-// pages and Nitro's "static" preset (no Cloudflare worker, no wrangler.json).
+// STATIC_BUILD=1 (lo setea `npm run build:static`) cambia únicamente el preset de Nitro
+// a "node-server", para que .output/server/index.mjs sea ejecutable con node.
+// scripts/build-static.mjs levanta ese server, crawlea el sitio y guarda cada ruta
+// como HTML en dist/. No se usa el prerenderer de Nitro ni el modo SPA: el build es
+// un SSR normal, idéntico al de `npm run build` salvo por el preset.
 const isStaticBuild = process.env["STATIC_BUILD"] === "1";
 
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this. In static SPA mode the plugin manages its own
-    // prerender shell, so the custom server entry is left out.
-    ...(isStaticBuild
-      ? {
-          spa: {
-            enabled: true,
-            prerender: { enabled: true, crawlLinks: true, retryCount: 3 },
-          },
-        }
-      : { server: { entry: "server" } }),
+    // nitro/vite builds from this.
+    server: { entry: "server" },
   },
-  ...(isStaticBuild ? { nitro: { preset: "static" } } : {}),
+  ...(isStaticBuild ? { nitro: { preset: "node-server" } } : {}),
 });
