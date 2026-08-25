@@ -31,7 +31,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 function iff_content_post_id() {
 	$front = (int) get_option( 'page_on_front' );
 
-	return $front > 0 ? $front : 0;
+	if ( $front <= 0 ) {
+		return 0;
+	}
+
+	// La opción puede quedar apuntando a una página borrada o en la papelera; en
+	// ese caso se trabaja con el contenido del tema en vez de leer de la nada.
+	$post = get_post( $front );
+
+	if ( ! $post || 'trash' === $post->post_status ) {
+		return 0;
+	}
+
+	return $front;
 }
 
 /**

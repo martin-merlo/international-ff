@@ -32,7 +32,23 @@ function iff_acf_supports_repeater() {
 		return $supports;
 	}
 
-	$supports = function_exists( 'acf_get_field_type' ) && (bool) acf_get_field_type( 'repeater' );
+	// Se exigen las dos señales a la vez. Solo mirar el tipo de campo no alcanza:
+	// algunas versiones gratuitas registran un "repeater" de mentira para ofrecer
+	// la actualización a PRO, y registrar campos que después no se saben dibujar
+	// rompe la pantalla de edición.
+	$is_pro = ( defined( 'ACF_PRO' ) && ACF_PRO )
+		|| ( function_exists( 'acf_get_setting' ) && acf_get_setting( 'pro' ) );
+
+	$has_field_type = function_exists( 'acf_get_field_type' ) && (bool) acf_get_field_type( 'repeater' );
+
+	$supports = (bool) ( $is_pro && $has_field_type );
+
+	/**
+	 * Permite forzar el modo de edición de las listas.
+	 *
+	 * @param bool $supports Si se usan campos Repeater.
+	 */
+	$supports = (bool) apply_filters( 'iff_use_acf_repeater', $supports );
 
 	return $supports;
 }
