@@ -1,0 +1,16 @@
+{
+  "name": "international-ff-theme-build",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Toolchain SOLO de desarrollo para compilar el CSS del tema. Nada de esto se sube al servidor: el hosting sirve el CSS ya compilado.",
+  "type": "module",
+  "scripts": {
+    "source": "node generate-source-css.mjs",
+    "build": "tailwindcss -i ./src/theme-source.css -o ../assets/css/theme.css --minify",
+    "dev": "tailwindcss -i ./src/theme-source.css -o ../assets/css/theme.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.2.1",
+    "tailwindcss": "4.2.1"
+  }
+}
