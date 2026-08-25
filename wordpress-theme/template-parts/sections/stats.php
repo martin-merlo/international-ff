@@ -23,9 +23,9 @@ $iff_stats = iff_stats();
 				<p class="font-display text-4xl font-extrabold text-gold sm:text-5xl">
 					<span
 						data-counter
-						data-count="<?php echo esc_attr( $iff_stat['value'] ); ?>"
+						data-count="<?php echo esc_attr( (int) $iff_stat['value'] ); ?>"
 						data-suffix="<?php echo esc_attr( $iff_stat['suffix'] ); ?>"
-					><?php echo esc_html( number_format( $iff_stat['value'], 0, ',', '.' ) . $iff_stat['suffix'] ); ?></span>
+					><?php echo esc_html( number_format( (int) $iff_stat['value'], 0, ',', '.' ) . $iff_stat['suffix'] ); ?></span>
 				</p>
 				<p class="mt-2 text-sm font-semibold text-primary-foreground/85"><?php echo esc_html( $iff_stat['label'] ); ?></p>
 			</div>

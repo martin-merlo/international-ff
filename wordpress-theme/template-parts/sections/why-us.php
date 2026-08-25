@@ -13,9 +13,9 @@ $iff_reasons = iff_reasons();
 ?>
 <section class="bg-navy py-24">
 	<div class="container-x">
-		<p class="eyebrow text-gold">Por qué elegirnos</p>
+		<p class="eyebrow text-gold"><?php echo esc_html( iff_content( 'why_eyebrow' ) ); ?></p>
 		<h2 class="mt-4 max-w-2xl text-3xl font-extrabold text-primary-foreground sm:text-5xl">
-			Experiencia comprobable en cada envío
+			<?php echo esc_html( iff_content( 'why_title' ) ); ?>
 		</h2>
 		<div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 			<?php foreach ( $iff_reasons as $iff_reason ) : ?>

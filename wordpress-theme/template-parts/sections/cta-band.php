@@ -10,11 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $iff_contact = iff_contact();
+$iff_image   = iff_image( 'cta_image' );
 ?>
 <section class="relative isolate overflow-hidden">
 	<img
-		src="<?php echo esc_url( iff_img( 'cta-terminal.jpg' ) ); ?>"
-		alt="Terminal de contenedores de noche"
+		src="<?php echo esc_url( $iff_image['url'] ); ?>"
+		alt="<?php echo esc_attr( $iff_image['alt'] ); ?>"
 		loading="lazy"
 		width="1600"
 		height="900"
@@ -23,18 +24,17 @@ $iff_contact = iff_contact();
 	<div class="absolute inset-0 -z-10 bg-[oklch(0.21_0.062_258/0.9)]"></div>
 	<div class="container-x py-24 text-center">
 		<h2 class="mx-auto max-w-3xl text-3xl font-extrabold text-primary-foreground sm:text-5xl">
-			Contáctenos y le responderemos a la brevedad posible
+			<?php echo esc_html( iff_content( 'cta_title' ) ); ?>
 		</h2>
 		<p class="mx-auto mt-5 max-w-2xl text-lg text-primary-foreground/85">
-			Pida un presupuesto para su mudanza internacional u operación de comercio exterior y lo
-			asesoraremos con gusto.
+			<?php echo esc_html( iff_content( 'cta_description' ) ); ?>
 		</p>
 		<div class="mt-9 flex flex-wrap justify-center gap-4">
 			<a
-				href="#contacto"
+				href="<?php echo esc_attr( iff_content( 'cta_button_url' ) ); ?>"
 				class="inline-flex items-center gap-2 rounded-full bg-gold px-7 py-4 text-sm font-bold text-navy-deep transition-transform hover:-translate-y-0.5"
 			>
-				Solicitar presupuesto <?php iff_icon( 'arrow-right', 'h-4 w-4' ); ?>
+				<?php echo esc_html( iff_content( 'cta_button_text' ) ); ?> <?php iff_icon( 'arrow-right', 'h-4 w-4' ); ?>
 			</a>
 			<a
 				href="tel:<?php echo esc_attr( $iff_contact['phone_href'] ); ?>"

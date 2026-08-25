@@ -19,19 +19,18 @@ $iff_social    = iff_social_links();
 				<div class="flex items-center gap-3">
 					<img
 						src="<?php echo esc_url( iff_img( 'logo-iff.png' ) ); ?>"
-						alt="International Freight Forwarder"
+						alt="<?php echo esc_attr( iff_content( 'company_name' ) ); ?>"
 						width="56"
 						height="56"
 						loading="lazy"
 						class="h-14 w-14 shrink-0 rounded-full object-contain"
 					/>
 					<span class="font-display text-lg font-extrabold text-primary-foreground">
-						International Freight Forwarder
+						<?php echo esc_html( iff_content( 'company_name' ) ); ?>
 					</span>
 				</div>
 				<p class="mt-5 max-w-md text-sm leading-relaxed text-primary-foreground/75">
-					Mudanzas internacionales, comercio exterior y agente de cargas. Oficina central en
-					Mendoza, Argentina, con oficinas asociadas en el resto del mundo.
+					<?php echo esc_html( iff_content( 'footer_description' ) ); ?>
 				</p>
 				<div class="mt-6 flex gap-3">
 					<?php foreach ( $iff_social as $iff_link ) : ?>
@@ -49,13 +48,13 @@ $iff_social    = iff_social_links();
 
 			<div>
 				<h3 class="text-sm font-bold uppercase tracking-widest text-gold">
-					Red de operadores
+					<?php echo esc_html( iff_content( 'footer_operators_title' ) ); ?>
 				</h3>
 				<ul class="mt-5 grid max-w-[210px] grid-cols-3 gap-2">
 					<?php foreach ( $iff_operators as $iff_operator ) : ?>
 						<li class="overflow-hidden rounded-md">
 							<img
-								src="<?php echo esc_url( iff_img( $iff_operator['image'] ) ); ?>"
+								src="<?php echo esc_url( $iff_operator['image'] ); ?>"
 								alt="Logo <?php echo esc_attr( $iff_operator['name'] ); ?>"
 								width="66"
 								height="66"
@@ -68,7 +67,7 @@ $iff_social    = iff_social_links();
 			</div>
 
 			<div>
-				<h3 class="text-sm font-bold uppercase tracking-widest text-gold">Contacto</h3>
+				<h3 class="text-sm font-bold uppercase tracking-widest text-gold"><?php echo esc_html( iff_content( 'footer_contact_title' ) ); ?></h3>
 				<ul class="mt-5 space-y-3 text-sm text-primary-foreground/80">
 					<li class="flex gap-3">
 						<?php iff_icon( 'map-pin', 'mt-0.5 h-4 w-4 shrink-0 text-gold' ); ?>
@@ -92,7 +91,7 @@ $iff_social    = iff_social_links();
 
 		<div class="container-x mt-12 border-t border-primary-foreground/15 pt-6">
 			<p class="text-xs text-primary-foreground/60">
-				© <?php echo esc_html( gmdate( 'Y' ) ); ?> International Freight Forwarder. Todos los derechos
+				© <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php echo esc_html( iff_content( 'company_name' ) ); ?>. Todos los derechos
 				reservados.
 			</p>
 		</div>

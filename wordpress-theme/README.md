@@ -11,9 +11,13 @@ comparar.
 1. Comprimir esta carpeta en un `.zip` (o subirla por FTP a `/wp-content/themes/`).
 2. En el panel de WordPress: **Apariencia → Temas → Añadir nuevo → Subir tema**.
 3. Activar **International Freight Forwarder**.
+4. Instalar y activar **Advanced Custom Fields** (versión gratuita) para poder
+   editar el contenido desde el panel.
 
-No hace falta ningún plugin, ni configuración, ni variables de entorno. Tampoco hay
-que crear páginas: la home usa `front-page.php`, que ya trae las nueve secciones.
+Al activarlo, el tema crea solo la página **Inicio**, la define como portada y
+carga en la base todo el contenido original: el sitio queda funcionando y
+editable sin tocar nada más. Sin ACF el sitio se ve igual, pero el contenido no
+se puede editar (el tema lo avisa en el panel).
 
 **Lo que NO se sube al servidor:** la carpeta `build/`. Es la toolchain de desarrollo
 para recompilar el CSS. El sitio en producción solo necesita el CSS ya compilado, que
@@ -31,7 +35,10 @@ international-ff/
 ├── header.php / footer.php      Nav fija y pie.
 ├── screenshot.png               Vista previa del tema en el panel.
 ├── inc/
-│   ├── content.php              TODO el contenido del sitio (portado de data.ts).
+│   ├── content-schema.php       Qué campos existen y su contenido original.
+│   ├── content.php              Capa de acceso: lee ACF con fallback al original.
+│   ├── acf-fields.php           Registra el grupo de campos del panel.
+│   ├── acf-setup.php            Crea la portada, carga el contenido, avisos.
 │   ├── icons.php                22 iconos SVG inline (portados de lucide-react).
 │   ├── enqueue.php              Encola CSS/JS y precarga las fuentes.
 │   └── template-helpers.php     iff_asset(), iff_img().
@@ -49,13 +56,45 @@ international-ff/
 
 ## Editar el contenido
 
-Todos los textos, teléfonos, mails, servicios y testimonios están en
-[inc/content.php](inc/content.php), en funciones que devuelven arrays. Los templates
-no tienen texto hardcodeado suelto: recorren esos arrays.
+Todo el contenido se edita desde el panel de WordPress, en la página **Inicio**
+(Páginas → Inicio, o "Editar contenido del sitio" en la barra superior). El
+metabox **Contenido del sitio** organiza los campos en once pestañas: General,
+Portada, Estadísticas, Servicios, Nosotros, Cómo trabajamos, Por qué elegirnos,
+Testimonios, Franja de contacto, Contacto y Pie de página.
 
-Está armado así a propósito. El día que haga falta que el cliente edite desde el
-panel, alcanza con cambiar el cuerpo de cada función por una llamada a ACF, al
-Customizer o a un CPT: **el marcado no se toca**.
+### Cómo está armado
+
+```
+inc/content-schema.php   Única fuente de verdad: qué campos existen, cómo se
+                         llaman y cuál es su valor original.
+        │
+        ├──> inc/acf-fields.php   registra el grupo de campos que ve el editor
+        ├──> inc/acf-setup.php    crea la portada y carga el contenido inicial
+        └──> inc/content.php      lee los valores y se los pasa a los templates
+                                     │
+                                     └──> template-parts/  (marcado, sin lógica)
+```
+
+Los templates no llaman a `get_field()`: piden el contenido a la capa de acceso
+(`iff_content()`, `iff_rows()`, `iff_image()`, `iff_lines()`), que resuelve de
+dónde sacarlo.
+
+### Fallbacks
+
+Cada campo tiene como respaldo el contenido original del sitio. Si ACF se
+desactiva, un campo queda vacío o todavía no hay portada configurada, el sitio
+sigue mostrando el contenido correcto en vez de romperse o quedar en blanco.
+
+Dos campos son la excepción y **sí** se pueden vaciar a propósito: el segundo
+párrafo de Nosotros y el destino del botón secundario de la portada (que vacío
+usa el WhatsApp de la pestaña General). Están marcados con `optional` en el
+esquema.
+
+### Agregar un campo nuevo
+
+Se agrega una sola vez en `inc/content-schema.php`, con su etiqueta, tipo y valor
+por defecto. De ahí salen solos el campo en el panel, el default y la carga
+inicial. Después se usa en el template con `iff_content( 'mi_campo' )`.
 
 ## Recompilar el CSS
 
@@ -86,6 +125,20 @@ php -S 127.0.0.1:4600 build/preview/router.php
 
 Sirve para comparar contra el sitio original sin montar una instalación completa.
 No es WordPress: valida el marcado y los estilos, no el comportamiento del CMS.
+
+## ACF: obligatorio para editar, no para que el sitio funcione
+
+El tema necesita el plugin **Advanced Custom Fields** (la versión gratuita
+alcanza) para que el contenido sea editable. Si no está instalado, el tema lo
+avisa en el panel y el sitio sigue funcionando con el contenido que trae el tema.
+
+**Repeaters:** los bloques que se repiten (servicios, estadísticas, pasos,
+motivos, testimonios, operadores) usan campos Repeater si la instalación los
+soporta. El Repeater es parte de ACF PRO; con la versión gratuita el tema
+registra en su lugar campos numerados (Servicio 1, Servicio 2…). El frontend es
+idéntico en los dos casos: cambia solo la comodidad de edición. Con la versión
+gratuita se puede cambiar el texto de cada bloque, pero no agregar ni reordenar
+bloques desde el panel.
 
 ## Qué se dejó igual que el original
 

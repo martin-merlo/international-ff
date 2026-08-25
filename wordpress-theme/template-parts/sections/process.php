@@ -14,9 +14,9 @@ $iff_total = count( $iff_steps );
 ?>
 <section class="bg-background py-24">
 	<div class="container-x">
-		<p class="eyebrow text-navy-soft">Cómo trabajamos</p>
+		<p class="eyebrow text-navy-soft"><?php echo esc_html( iff_content( 'process_eyebrow' ) ); ?></p>
 		<h2 class="mt-4 text-3xl font-extrabold text-foreground sm:text-5xl">
-			Cuatro pasos, cero sorpresas
+			<?php echo esc_html( iff_content( 'process_title' ) ); ?>
 		</h2>
 		<div class="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
 			<?php foreach ( $iff_steps as $iff_index => $iff_step ) : ?>

@@ -16,8 +16,21 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const themeRoot = resolve(here, "..");
 
-// Clases que no son utilidades de Tailwind: son ganchos de JS/CSS propios.
-const NON_UTILITY = new Set(["group", "is-scrolled", "lucide", "%s"]);
+// Clases que no son utilidades de Tailwind y por lo tanto no tienen que estar en
+// el CSS compilado: ganchos propios de JS/CSS, el marcador de printf, y las
+// clases del panel de WordPress (los avisos de admin, que estila el propio WP).
+const NON_UTILITY = new Set([
+  "group",
+  "is-scrolled",
+  "lucide",
+  "%s",
+  "notice",
+  "notice-warning",
+  "notice-info",
+  "notice-success",
+  "notice-error",
+  "is-dismissible",
+]);
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {

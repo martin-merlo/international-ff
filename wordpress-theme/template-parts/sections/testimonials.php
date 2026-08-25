@@ -13,9 +13,9 @@ $iff_testimonials = iff_testimonials();
 ?>
 <section id="testimonios" class="bg-background py-24">
 	<div class="container-x">
-		<p class="eyebrow text-navy-soft">Testimonios</p>
+		<p class="eyebrow text-navy-soft"><?php echo esc_html( iff_content( 'testimonials_eyebrow' ) ); ?></p>
 		<h2 class="mt-4 text-3xl font-extrabold text-foreground sm:text-5xl">
-			Lo que dicen nuestros clientes
+			<?php echo esc_html( iff_content( 'testimonials_title' ) ); ?>
 		</h2>
 		<div class="mt-14 grid gap-8 lg:grid-cols-3">
 			<?php foreach ( $iff_testimonials as $iff_testimonial ) : ?>
@@ -25,7 +25,7 @@ $iff_testimonials = iff_testimonials();
 						<?php echo esc_html( $iff_testimonial['quote'] ); ?>
 					</blockquote>
 					<div class="mt-6 flex gap-1">
-						<?php for ( $iff_star = 0; $iff_star < 5; $iff_star++ ) : ?>
+						<?php for ( $iff_star = 0; $iff_star < iff_rating( $iff_testimonial ); $iff_star++ ) : ?>
 							<?php iff_icon( 'star', 'h-4 w-4 fill-gold text-gold' ); ?>
 						<?php endfor; ?>
 					</div>

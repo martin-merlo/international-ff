@@ -49,6 +49,31 @@ function iff_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'iff_enqueue_assets' );
 
 /**
+ * Saca de la portada los estilos del editor de bloques.
+ *
+ * La portada no usa bloques: la arma front-page.php. Pero WordPress igual encola
+ * wp-block-library y los "global styles", que traen reglas propias (entre otras,
+ * un margen en <figure>) que pisan el reset de Tailwind y descuadran la grilla de
+ * testimonios por 16px.
+ *
+ * Se quitan SOLO en la portada: si algún día se publica una página con bloques,
+ * ahí siguen cargándose normalmente.
+ *
+ * @return void
+ */
+function iff_dequeue_block_styles() {
+	if ( ! is_front_page() ) {
+		return;
+	}
+
+	wp_dequeue_style( 'wp-block-library' );
+	wp_dequeue_style( 'wp-block-library-theme' );
+	wp_dequeue_style( 'global-styles' );
+	wp_dequeue_style( 'classic-theme-styles' );
+}
+add_action( 'wp_enqueue_scripts', 'iff_dequeue_block_styles', 100 );
+
+/**
  * Precarga las fuentes self-hosted.
  *
  * Las Archivo/Manrope están servidas desde el propio tema (nada de Google Fonts

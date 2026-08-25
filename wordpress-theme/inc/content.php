@@ -1,14 +1,20 @@
 <?php
 /**
- * Contenido del sitio.
+ * Capa de acceso al contenido.
  *
- * Portado 1:1 desde src/components/site/data.ts del proyecto original. El
- * contenido está hardcodeado a propósito (decisión de proyecto): el sitio es una
- * landing de una sola página que cambia poco.
+ * Los templates NO llaman a get_field() directamente: piden el contenido acá y
+ * esta capa decide de dónde sacarlo.
  *
- * Está centralizado acá, y no desperdigado por los templates, justamente para que
- * el día que haga falta hacerlo editable alcance con reemplazar el cuerpo de cada
- * función por una llamada a ACF, al Customizer o a un CPT, sin tocar el marcado.
+ *   valor guardado en ACF  →  si existe, se usa
+ *   valor por defecto      →  si no (ACF desactivado, campo vacío, sin portada)
+ *
+ * Los defaults salen de inc/content-schema.php y son exactamente el contenido
+ * que el sitio tenía hardcodeado. Consecuencia práctica: si alguien desactiva
+ * ACF, borra un campo o rompe la instalación, el sitio sigue mostrando el
+ * contenido correcto en lugar de romperse o quedar en blanco.
+ *
+ * Las funciones públicas (iff_contact, iff_services, iff_stats…) devuelven las
+ * mismas estructuras que antes, para que los templates casi no cambien.
  *
  * @package International_FF
  */
@@ -18,27 +24,330 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * ID de la entrada donde vive el contenido: la página de portada.
+ *
+ * @return int 0 si todavía no hay una portada estática configurada.
+ */
+function iff_content_post_id() {
+	$front = (int) get_option( 'page_on_front' );
+
+	return $front > 0 ? $front : 0;
+}
+
+/**
+ * ¿Podemos leer valores de ACF ahora mismo?
+ *
+ * @return bool
+ */
+function iff_acf_ready() {
+	return function_exists( 'get_field' ) && iff_content_post_id() > 0;
+}
+
+/**
+ * Valor crudo de un campo, sin fallback.
+ *
+ * @param string $key Clave del campo.
+ * @return mixed null si no hay valor.
+ */
+function iff_raw( $key ) {
+	if ( ! iff_acf_ready() ) {
+		return null;
+	}
+
+	$value = get_field( $key, iff_content_post_id() );
+
+	if ( null === $value || '' === $value || array() === $value ) {
+		return null;
+	}
+
+	return $value;
+}
+
+/**
+ * Valor de texto de un campo, con fallback al contenido original.
+ *
+ * Es la función que usan los templates para cualquier texto suelto.
+ *
+ * @param string $key      Clave del campo.
+ * @param mixed  $fallback Fallback explícito; si se omite, usa el del esquema.
+ * @return string
+ */
+function iff_content( $key, $fallback = null ) {
+	$field = iff_schema_field( $key );
+
+	// Campos marcados como opcionales: si el editor los vacía a propósito, se
+	// respeta el vacío en vez de reponer el texto original.
+	if ( ! empty( $field['optional'] ) && iff_acf_ready() ) {
+		$raw = get_field( $key, iff_content_post_id() );
+
+		if ( is_string( $raw ) ) {
+			return $raw;
+		}
+	}
+
+	$value = iff_raw( $key );
+
+	if ( null === $value ) {
+		$value = ( null !== $fallback ) ? $fallback : iff_default( $key );
+	}
+
+	return is_scalar( $value ) ? (string) $value : '';
+}
+
+/**
+ * Campo de tipo lista (un ítem por línea).
+ *
+ * @param string $key Clave del campo.
+ * @return array<int,string>
+ */
+function iff_lines( $key ) {
+	$value = iff_raw( $key );
+
+	if ( null === $value ) {
+		$default = iff_default( $key );
+
+		return is_array( $default ) ? $default : array();
+	}
+
+	if ( is_array( $value ) ) {
+		return $value;
+	}
+
+	$lines = preg_split( '/\r\n|\r|\n/', (string) $value );
+	$lines = array_map( 'trim', $lines );
+
+	return array_values( array_filter( $lines, 'strlen' ) );
+}
+
+/**
+ * Resuelve el valor de un campo imagen a una URL utilizable.
+ *
+ * Acepta lo que devuelva ACF (array, ID o URL) y, si no hay nada, cae al archivo
+ * del tema que venía por defecto.
+ *
+ * @param mixed  $value            Valor de ACF.
+ * @param string $default_filename Archivo dentro de assets/img/.
+ * @return string
+ */
+function iff_resolve_image_url( $value, $default_filename = '' ) {
+	if ( is_array( $value ) && ! empty( $value['url'] ) ) {
+		return $value['url'];
+	}
+
+	if ( is_numeric( $value ) ) {
+		$url = wp_get_attachment_url( (int) $value );
+		if ( $url ) {
+			return $url;
+		}
+	}
+
+	if ( is_string( $value ) && '' !== $value ) {
+		// Puede ser una URL completa o el nombre de archivo por defecto del tema.
+		return ( 0 === strpos( $value, 'http' ) || 0 === strpos( $value, '/' ) )
+			? $value
+			: iff_img( $value );
+	}
+
+	return '' !== $default_filename ? iff_img( $default_filename ) : '';
+}
+
+/**
+ * Imagen suelta: devuelve URL y texto alternativo.
+ *
+ * El alt sale de la biblioteca de medios de WordPress (el campo "Texto
+ * alternativo" de la imagen); si está vacío usa el que traía el sitio.
+ *
+ * @param string $key Clave del campo.
+ * @return array{url:string,alt:string}
+ */
+function iff_image( $key ) {
+	$field       = iff_schema_field( $key );
+	$default_img = isset( $field['default'] ) ? $field['default'] : '';
+	$default_alt = isset( $field['default_alt'] ) ? $field['default_alt'] : '';
+
+	$value = iff_raw( $key );
+	$alt   = '';
+
+	if ( is_array( $value ) && ! empty( $value['alt'] ) ) {
+		$alt = $value['alt'];
+	} elseif ( is_numeric( $value ) ) {
+		$alt = (string) get_post_meta( (int) $value, '_wp_attachment_image_alt', true );
+	}
+
+	return array(
+		'url' => iff_resolve_image_url( $value, $default_img ),
+		'alt' => '' !== $alt ? $alt : $default_alt,
+	);
+}
+
+/**
+ * Filas de un campo repetidor.
+ *
+ * Funciona con el campo Repeater de ACF PRO y, si no está disponible, con los
+ * campos numerados que registra el fallback (ver inc/acf-fields.php). En ambos
+ * casos devuelve la misma estructura, así que los templates no se enteran.
+ *
+ * @param string $key Clave del campo.
+ * @return array<int,array<string,mixed>>
+ */
+function iff_rows( $key ) {
+	$field = iff_schema_field( $key );
+
+	if ( ! $field || 'repeat' !== $field['type'] ) {
+		return array();
+	}
+
+	$subs     = $field['sub_fields'];
+	$defaults = isset( $field['default'] ) ? $field['default'] : array();
+	$rows     = array();
+
+	if ( iff_acf_ready() ) {
+		$rows = iff_acf_supports_repeater()
+			? iff_rows_from_repeater( $key, $subs )
+			: iff_rows_from_flat( $key, $subs, count( $defaults ) );
+	}
+
+	if ( empty( $rows ) ) {
+		$rows = $defaults;
+	}
+
+	// Las imágenes se normalizan a URL, vengan de ACF o del default del tema.
+	foreach ( $rows as $index => $row ) {
+		foreach ( $subs as $name => $sub ) {
+			if ( 'image' === $sub['type'] ) {
+				$fallback           = isset( $defaults[ $index ][ $name ] ) ? $defaults[ $index ][ $name ] : '';
+				$rows[ $index ][ $name ] = iff_resolve_image_url(
+					isset( $row[ $name ] ) ? $row[ $name ] : '',
+					$fallback
+				);
+			}
+
+			if ( 'lines' === $sub['type'] && isset( $row[ $name ] ) && ! is_array( $row[ $name ] ) ) {
+				$lines                   = preg_split( '/\r\n|\r|\n/', (string) $row[ $name ] );
+				$lines                   = array_map( 'trim', $lines );
+				$rows[ $index ][ $name ] = array_values( array_filter( $lines, 'strlen' ) );
+			}
+		}
+	}
+
+	return $rows;
+}
+
+/**
+ * Lee las filas desde un campo Repeater de ACF.
+ *
+ * @param string $key  Clave del campo.
+ * @param array  $subs Definición de los subcampos.
+ * @return array<int,array<string,mixed>>
+ */
+function iff_rows_from_repeater( $key, $subs ) {
+	$value = get_field( $key, iff_content_post_id() );
+
+	if ( ! is_array( $value ) ) {
+		return array();
+	}
+
+	$rows = array();
+
+	foreach ( $value as $row ) {
+		$clean = array();
+		foreach ( $subs as $name => $sub ) {
+			$clean[ $name ] = isset( $row[ $name ] ) ? $row[ $name ] : '';
+		}
+		if ( array_filter( $clean, 'iff_not_empty' ) ) {
+			$rows[] = $clean;
+		}
+	}
+
+	return $rows;
+}
+
+/**
+ * Lee las filas desde campos numerados (fallback sin Repeater).
+ *
+ * @param string $key   Clave del campo.
+ * @param array  $subs  Definición de los subcampos.
+ * @param int    $count Cantidad de filas registradas.
+ * @return array<int,array<string,mixed>>
+ */
+function iff_rows_from_flat( $key, $subs, $count ) {
+	$rows = array();
+
+	for ( $i = 1; $i <= $count; $i++ ) {
+		$clean = array();
+		foreach ( $subs as $name => $sub ) {
+			$clean[ $name ] = get_field( $key . '_' . $i . '_' . $name, iff_content_post_id() );
+		}
+		if ( array_filter( $clean, 'iff_not_empty' ) ) {
+			$rows[] = $clean;
+		}
+	}
+
+	return $rows;
+}
+
+/**
+ * ¿El valor tiene contenido? (0 cuenta como contenido, '' y null no).
+ *
+ * @param mixed $value Valor.
+ * @return bool
+ */
+function iff_not_empty( $value ) {
+	if ( is_array( $value ) ) {
+		return ! empty( $value );
+	}
+
+	return null !== $value && '' !== $value;
+}
+
+/* -------------------------------------------------------------------------
+ * API pública para los templates.
+ *
+ * Devuelven las mismas estructuras que cuando el contenido estaba hardcodeado.
+ * ---------------------------------------------------------------------- */
+
+/**
  * Datos de contacto de la empresa.
  *
  * @return array<string,string>
  */
 function iff_contact() {
+	$phone    = iff_content( 'phone' );
+	$phone2   = iff_content( 'phone2' );
+	$number   = preg_replace( '/\D/', '', iff_content( 'whatsapp_number' ) );
+	$message  = iff_content( 'whatsapp_message' );
+
 	return array(
-		'phone'           => '+54 9 261 506-3034',
-		'phone_href'      => '+5492615063034',
-		'phone2'          => '+54 9 261 419-5373',
-		'phone2_href'     => '+5492614195373',
-		'whatsapp_number' => '5492615063034',
-		'whatsapp'        => 'https://wa.me/5492615063034?text=Hola%2C%20quisiera%20solicitar%20un%20presupuesto',
-		'email'           => 'jmotta@internationalff.com',
-		'email2'          => 'martinruggeri@internationalff.com',
-		'address'         => 'Moreno 3350 - 4ta. Oeste - Mendoza - CPA M5500 EGN - Rep. Argentina',
-		'map_embed'       => 'https://www.google.com/maps?q=Moreno%203350%20Mendoza%20Argentina&output=embed',
+		'phone'           => $phone,
+		'phone_href'      => iff_tel_href( $phone ),
+		'phone2'          => $phone2,
+		'phone2_href'     => iff_tel_href( $phone2 ),
+		'person'          => iff_content( 'contact_person' ),
+		'person2'         => iff_content( 'contact_person2' ),
+		'whatsapp_number' => $number,
+		'whatsapp'        => 'https://wa.me/' . $number . '?text=' . rawurlencode( $message ),
+		'email'           => iff_content( 'email' ),
+		'email2'          => iff_content( 'email2' ),
+		'address'         => iff_content( 'address' ),
+		'map_embed'       => iff_content( 'map_embed' ),
 	);
 }
 
 /**
+ * Convierte un teléfono legible en un href tel:.
+ *
+ * @param string $phone Teléfono como se muestra.
+ * @return string
+ */
+function iff_tel_href( $phone ) {
+	return preg_replace( '/[^+\d]/', '', $phone );
+}
+
+/**
  * Links de navegación (anchors de la misma página).
+ *
+ * Se quedan en el tema: están atados a los IDs de las secciones, así que
+ * editarlos desde el panel rompería la navegación.
  *
  * @return array<int,array<string,string>>
  */
@@ -68,99 +377,30 @@ function iff_nav_links() {
 }
 
 /**
- * Servicios que ofrece la empresa.
+ * Servicios.
  *
  * @return array<int,array<string,mixed>>
  */
 function iff_services() {
-	return array(
-		array(
-			'title'  => 'Mudanzas Internacionales',
-			'image'  => 'service-moving.jpg',
-			'text'   => 'Mudanzas puerta a puerta desde y hacia cualquier lugar del mundo, a través de nuestros representantes internacionales. Nos encargamos de todos los detalles, incluidas las mudanzas corporativas.',
-			'points' => array(
-				'Servicio puerta a puerta',
-				'Embalaje y manejo de efectos personales',
-				'Mudanzas corporativas',
-			),
-		),
-		array(
-			'title'  => 'Comercio Exterior',
-			'image'  => 'service-customs.jpg',
-			'text'   => 'Amplia variedad de productos e instrumentos financieros y de logística en comercio internacional para atender las necesidades locales y globales de nuestros clientes.',
-			'points' => array(
-				'Importación y exportación de mercaderías',
-				'Inscriptos en Dirección Nacional de Aduanas',
-				'Gestiones dentro y fuera del país',
-			),
-		),
-		array(
-			'title'  => 'Agente de Cargas',
-			'image'  => 'service-freight.jpg',
-			'text'   => 'Somos despachantes de aduana en Mendoza, Argentina. Lo asesoramos en todos los aspectos técnicos, operativos y jurídicos que conforman el universo normativo aduanero.',
-			'points' => array(
-				'Cargas full y parciales LCL',
-				'Servicio multimodal aire, tierra y mar',
-				'Envío de muestras courier a todo el mundo',
-			),
-		),
-	);
+	return iff_rows( 'services' );
 }
 
 /**
- * Números de la banda de estadísticas (contadores animados).
+ * Estadísticas.
  *
  * @return array<int,array<string,mixed>>
  */
 function iff_stats() {
-	return array(
-		array(
-			'value'  => 30,
-			'suffix' => '+',
-			'label'  => 'Años de experiencia',
-		),
-		array(
-			'value'  => 90,
-			'suffix' => '+',
-			'label'  => 'Países con cobertura',
-		),
-		array(
-			'value'  => 5000,
-			'suffix' => '+',
-			'label'  => 'Envíos realizados',
-		),
-		array(
-			'value'  => 98,
-			'suffix' => '%',
-			'label'  => 'Clientes satisfechos',
-		),
-	);
+	return iff_rows( 'stats' );
 }
 
 /**
- * Pasos del proceso de trabajo.
+ * Pasos del proceso.
  *
  * @return array<int,array<string,string>>
  */
 function iff_steps() {
-	return array(
-		array(
-			'title' => 'Contacto',
-			'text'  => 'Nos cuenta qué necesita enviar o mudar. Escuchamos su caso y definimos el alcance del servicio.',
-		),
-		array(
-			'title' => 'Planificación',
-			'text'  => 'Elaboramos el presupuesto y el plan logístico: modalidad aérea, marítima o terrestre, plazos y costos.',
-		),
-		array(
-			'title' => 'Documentación',
-			'text'  => 'Gestionamos permisos, despachos de aduana y toda la documentación en origen y destino.',
-		),
-		array(
-			'title' => 'Entrega',
-			'text'  => 'Seguimiento permanente hasta que su carga llega a destino en tiempo y forma.',
-		),
-	);
+	return iff_rows( 'steps' );
 }
 
 /**
@@ -169,38 +409,7 @@ function iff_steps() {
  * @return array<int,array<string,string>>
  */
 function iff_reasons() {
-	return array(
-		array(
-			'icon'  => 'award',
-			'title' => '30 años de trayectoria',
-			'text'  => 'Miles de mudanzas internacionales realizadas.',
-		),
-		array(
-			'icon'  => 'globe-2',
-			'title' => 'Red internacional',
-			'text'  => 'Oficina central en Mendoza y agentes asociados en el resto del mundo.',
-		),
-		array(
-			'icon'  => 'shield-check',
-			'title' => 'Marco aduanero',
-			'text'  => 'Asesoramiento técnico, operativo y jurídico en todo el proceso.',
-		),
-		array(
-			'icon'  => 'users',
-			'title' => 'Trato personal',
-			'text'  => 'Empresa familiar con dedicación especial en cada carga.',
-		),
-		array(
-			'icon'  => 'file-text',
-			'title' => 'Sin cargos imprevistos',
-			'text'  => 'Presupuestos claros y planificación anticipada.',
-		),
-		array(
-			'icon'  => 'package',
-			'title' => 'Multimodal',
-			'text'  => 'Aire, tierra y mar, cargas full y parciales LCL.',
-		),
-	);
+	return iff_rows( 'why_items' );
 }
 
 /**
@@ -209,99 +418,46 @@ function iff_reasons() {
  * @return array<int,array<string,string>>
  */
 function iff_about_cards() {
-	return array(
-		array(
-			'icon'  => 'clock',
-			'title' => 'Nuestra historia',
-			'text'  => 'Mas de 30 años de trayectoria.',
-		),
-		array(
-			'icon'  => 'handshake',
-			'title' => 'Nuestra filosofía',
-			'text'  => 'Ganarnos su confianza cada día.',
-		),
-		array(
-			'icon'  => 'package',
-			'title' => 'Nuestro compromiso',
-			'text'  => 'Su carga, en tiempo y forma.',
-		),
-	);
+	return iff_rows( 'about_cards' );
 }
 
 /**
- * Testimonios de clientes.
+ * Testimonios.
  *
- * @return array<int,array<string,string>>
+ * @return array<int,array<string,mixed>>
  */
 function iff_testimonials() {
-	return array(
-		array(
-			'name'  => 'Alejandro E.',
-			'role'  => 'Barcelona, España',
-			'quote' => 'Tuvimos que mudarnos con muy poco tiempo de preparación y elegimos IFF por recomendación de un amigo. Fue una decisión acertada.',
-		),
-		array(
-			'name'  => 'Tomás M.',
-			'role'  => 'Dallas, TX',
-			'quote' => 'Muy buena comunicación y experiencia en general. El container llegó más tarde de lo previsto pero por cuestiones climáticas.',
-		),
-		array(
-			'name'  => 'Sofía G.',
-			'role'  => 'Miami, Florida',
-			'quote' => 'Mi negocio ha prosperado gracias a que puedo comercializar mis productos afuera del país. La decisión de contratar los servicios de IFF fue correcta.',
-		),
-		array(
-			'name'  => 'Carla V.',
-			'role'  => 'New York, USA',
-			'quote' => 'Me recomendaron esta compañía y debo decir que estoy muy satisfecha con los servicios prestados, cumplieron en todo lo prometido.',
-		),
-		array(
-			'name'  => 'Javier',
-			'role'  => 'DFW Logistics',
-			'quote' => 'Hemos podido establecer una relación a largo plazo con IFF y sus servicios son cruciales para nuestra compañía.',
-		),
-	);
+	return iff_rows( 'testimonials' );
 }
 
 /**
- * Red de operadores del footer.
+ * Cantidad de estrellas de un testimonio.
+ *
+ * Si el campo está vacío devuelve 5, que es como se mostraban antes de que la
+ * puntuación fuera editable.
+ *
+ * @param array $testimonial Fila del testimonio.
+ * @return int Entre 0 y 5.
+ */
+function iff_rating( $testimonial ) {
+	if ( ! isset( $testimonial['rating'] ) || '' === $testimonial['rating'] ) {
+		return 5;
+	}
+
+	return max( 0, min( 5, (int) $testimonial['rating'] ) );
+}
+
+/**
+ * Red de operadores del pie.
  *
  * @return array<int,array<string,string>>
  */
 function iff_operators() {
-	return array(
-		array(
-			'image' => 'logo-itl.png',
-			'name'  => 'International Trade Logistics',
-		),
-		array(
-			'image' => 'logo-ccni.png',
-			'name'  => 'CCNI',
-		),
-		array(
-			'image' => 'logo-dhl.png',
-			'name'  => 'DHL',
-		),
-		array(
-			'image' => 'logo-somarco.png',
-			'name'  => 'Somarco',
-		),
-		array(
-			'image' => 'logo-ups.png',
-			'name'  => 'UPS',
-		),
-		array(
-			'image' => 'logo-msc.png',
-			'name'  => 'MSC',
-		),
-	);
+	return iff_rows( 'operators' );
 }
 
 /**
- * Redes sociales del footer.
- *
- * OJO: las URLs son placeholders (#inicio), tal cual estaban en el proyecto
- * original. Reemplazar por los perfiles reales cuando estén disponibles.
+ * Redes sociales del pie.
  *
  * @return array<int,array<string,string>>
  */
@@ -309,15 +465,15 @@ function iff_social_links() {
 	return array(
 		array(
 			'icon' => 'facebook',
-			'url'  => '#inicio',
+			'url'  => iff_content( 'social_facebook' ),
 		),
 		array(
 			'icon' => 'instagram',
-			'url'  => '#inicio',
+			'url'  => iff_content( 'social_instagram' ),
 		),
 		array(
 			'icon' => 'linkedin',
-			'url'  => '#inicio',
+			'url'  => iff_content( 'social_linkedin' ),
 		),
 	);
 }

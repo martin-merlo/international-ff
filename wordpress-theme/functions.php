@@ -11,10 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'IFF_VERSION', '1.0.0' );
 
+require_once get_template_directory() . '/inc/template-helpers.php';
+require_once get_template_directory() . '/inc/content-schema.php';
 require_once get_template_directory() . '/inc/content.php';
+require_once get_template_directory() . '/inc/acf-fields.php';
+require_once get_template_directory() . '/inc/acf-setup.php';
 require_once get_template_directory() . '/inc/icons.php';
 require_once get_template_directory() . '/inc/enqueue.php';
-require_once get_template_directory() . '/inc/template-helpers.php';
 
 /**
  * Soporte de funcionalidades del tema.
@@ -77,6 +80,28 @@ function iff_meta_tags() {
 	<?php
 }
 add_action( 'wp_head', 'iff_meta_tags', 5 );
+
+/**
+ * Idioma del <html>.
+ *
+ * El sitio está escrito en español rioplatense, pero una instalación nueva de
+ * WordPress viene en en_US y declararía ese idioma. Cuando el idioma del sitio
+ * sigue siendo el de fábrica, se declara es-AR (que es lo que el sitio decía
+ * antes de migrar a WordPress).
+ *
+ * Si alguien cambia el idioma en Ajustes → Generales, se respeta esa decisión.
+ *
+ * @param string $output Atributos generados por WordPress.
+ * @return string
+ */
+function iff_html_lang( $output ) {
+	if ( is_admin() || 'en_US' !== get_locale() ) {
+		return $output;
+	}
+
+	return preg_replace( '/lang="[^"]*"/', 'lang="es-AR"', $output );
+}
+add_filter( 'language_attributes', 'iff_html_lang' );
 
 /**
  * Título por defecto de la home.

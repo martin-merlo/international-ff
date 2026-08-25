@@ -17,13 +17,13 @@ $iff_contact  = iff_contact();
 $iff_services = iff_services();
 $iff_people   = array(
 	array(
-		'name' => 'Juan Motta',
+		'name' => $iff_contact['person'],
 		'tel'  => $iff_contact['phone'],
 		'href' => $iff_contact['phone_href'],
 		'mail' => $iff_contact['email'],
 	),
 	array(
-		'name' => 'Martin Ruggeri',
+		'name' => $iff_contact['person2'],
 		'tel'  => $iff_contact['phone2'],
 		'href' => $iff_contact['phone2_href'],
 		'mail' => $iff_contact['email2'],
@@ -32,21 +32,21 @@ $iff_people   = array(
 $iff_fields   = array(
 	array(
 		'id'        => 'nombre',
-		'label'     => 'Nombre y apellido',
+		'label'     => iff_content( 'form_label_nombre' ),
 		'type'      => 'text',
 		'maxlength' => 100,
 		'required'  => true,
 	),
 	array(
 		'id'        => 'email',
-		'label'     => 'Email',
+		'label'     => iff_content( 'form_label_email' ),
 		'type'      => 'email',
 		'maxlength' => 255,
 		'required'  => true,
 	),
 	array(
 		'id'        => 'telefono',
-		'label'     => 'Teléfono',
+		'label'     => iff_content( 'form_label_telefono' ),
 		'type'      => 'tel',
 		'maxlength' => 100,
 		'required'  => false,
@@ -57,11 +57,10 @@ $iff_input_class = 'mt-2 w-full rounded-xl border border-input bg-background px-
 <section id="contacto" class="bg-secondary py-24">
 	<div class="container-x grid gap-12 lg:grid-cols-2">
 		<div>
-			<p class="eyebrow text-navy-soft">Contacto</p>
-			<h2 class="mt-4 text-3xl font-extrabold text-foreground sm:text-4xl">Contáctenos</h2>
+			<p class="eyebrow text-navy-soft"><?php echo esc_html( iff_content( 'contact_eyebrow' ) ); ?></p>
+			<h2 class="mt-4 text-3xl font-extrabold text-foreground sm:text-4xl"><?php echo esc_html( iff_content( 'contact_title' ) ); ?></h2>
 			<p class="mt-5 text-lg text-muted-foreground">
-				Escríbanos por cualquier necesidad de servicio de mudanzas o comercio exterior y
-				responderemos a la brevedad posible.
+				<?php echo esc_html( iff_content( 'contact_description' ) ); ?>
 			</p>
 
 			<div class="mt-8 space-y-4">
@@ -105,7 +104,7 @@ $iff_input_class = 'mt-2 w-full rounded-xl border border-input bg-background px-
 			data-whatsapp-number="<?php echo esc_attr( $iff_contact['whatsapp_number'] ); ?>"
 			class="h-fit rounded-3xl bg-card p-8 shadow-[0_30px_70px_-50px_rgba(15,23,42,0.8)]"
 		>
-			<h3 class="text-xl font-bold text-card-foreground">Solicitar presupuesto</h3>
+			<h3 class="text-xl font-bold text-card-foreground"><?php echo esc_html( iff_content( 'form_title' ) ); ?></h3>
 			<div class="mt-6 space-y-4">
 				<?php foreach ( $iff_fields as $iff_field ) : ?>
 					<div>
@@ -123,7 +122,7 @@ $iff_input_class = 'mt-2 w-full rounded-xl border border-input bg-background px-
 					</div>
 				<?php endforeach; ?>
 				<div>
-					<label for="servicio" class="text-sm font-semibold text-foreground">Servicio</label>
+					<label for="servicio" class="text-sm font-semibold text-foreground"><?php echo esc_html( iff_content( 'form_label_servicio' ) ); ?></label>
 					<select id="servicio" name="servicio" class="<?php echo esc_attr( $iff_input_class ); ?>">
 						<?php foreach ( $iff_services as $iff_service ) : ?>
 							<option><?php echo esc_html( $iff_service['title'] ); ?></option>
@@ -131,7 +130,7 @@ $iff_input_class = 'mt-2 w-full rounded-xl border border-input bg-background px-
 					</select>
 				</div>
 				<div>
-					<label for="mensaje" class="text-sm font-semibold text-foreground">Mensaje</label>
+					<label for="mensaje" class="text-sm font-semibold text-foreground"><?php echo esc_html( iff_content( 'form_label_mensaje' ) ); ?></label>
 					<textarea
 						id="mensaje"
 						name="mensaje"
@@ -146,11 +145,10 @@ $iff_input_class = 'mt-2 w-full rounded-xl border border-input bg-background px-
 				type="submit"
 				class="mt-6 w-full rounded-full bg-navy px-6 py-4 text-sm font-bold text-primary-foreground transition-colors hover:bg-navy-deep"
 			>
-				Enviar consulta
+				<?php echo esc_html( iff_content( 'form_submit_text' ) ); ?>
 			</button>
 			<p id="iff-form-sent" hidden class="mt-4 text-center text-sm font-semibold text-navy">
-				Abrimos WhatsApp con su consulta lista para enviar. Si no se abrió, use el botón de
-				abajo.
+				<?php echo esc_html( iff_content( 'form_sent_text' ) ); ?>
 			</p>
 			<a
 				href="<?php echo esc_url( $iff_contact['whatsapp'] ); ?>"
@@ -158,7 +156,7 @@ $iff_input_class = 'mt-2 w-full rounded-xl border border-input bg-background px-
 				rel="noreferrer"
 				class="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-border px-6 py-4 text-sm font-bold text-foreground hover:bg-secondary"
 			>
-				<?php iff_icon( 'message-square', 'h-4 w-4' ); ?> Escribir por WhatsApp
+				<?php iff_icon( 'message-square', 'h-4 w-4' ); ?> <?php echo esc_html( iff_content( 'form_whatsapp_text' ) ); ?>
 			</a>
 		</form>
 	</div>

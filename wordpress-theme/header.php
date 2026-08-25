@@ -37,17 +37,17 @@ $iff_nav_links = iff_nav_links();
 			<a href="#inicio" class="flex min-w-0 items-center gap-3">
 				<img
 					src="<?php echo esc_url( iff_img( 'logo-iff.png' ) ); ?>"
-					alt="International Freight Forwarder"
+					alt="<?php echo esc_attr( iff_content( 'company_name' ) ); ?>"
 					width="56"
 					height="56"
 					class="h-12 w-12 shrink-0 rounded-full object-contain sm:h-14 sm:w-14"
 				/>
 				<span class="min-w-0">
 					<span class="block truncate font-display text-base font-extrabold leading-tight text-primary-foreground sm:text-lg [.is-scrolled_&]:text-foreground">
-						International Freight Forwarder
+						<?php echo esc_html( iff_content( 'company_name' ) ); ?>
 					</span>
 					<span class="block truncate text-xs text-primary-foreground/75 [.is-scrolled_&]:text-muted-foreground">
-						Mendoza, Argentina
+						<?php echo esc_html( iff_content( 'company_tagline' ) ); ?>
 					</span>
 				</span>
 			</a>
