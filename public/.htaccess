@@ -1,17 +1,31 @@
-# Landing de una sola página servida como estático.
-# Todo lo que no sea un archivo real cae en index.html.
+# Landing de una sola página servida como estático desde una SUBCARPETA:
+# https://www.internationalff.com/new/lovable/dist/
+# La raíz del dominio la ocupan otros sitios: nada acá debe apuntar a "/".
+# Si el sitio pasa a la raíz, actualizar RewriteBase y el destino del fallback
+# (y `base` en vite.config.ts + VITE_SITE_URL). Ver DEPLOY.md.
 
 DirectoryIndex index.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /
+  RewriteBase /new/lovable/dist/
 
+  # Archivos y directorios reales se sirven tal cual.
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  RewriteRule ^ /index.html [L]
+  # Cualquier otra ruta dentro de la subcarpeta la resuelve la SPA.
+  RewriteRule ^ /new/lovable/dist/index.html [L]
+</IfModule>
+
+# Compresión de texto. Los JPG/PNG ya vienen comprimidos: no se tocan.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml application/rss+xml
+  AddOutputFilterByType DEFLATE font/ttf font/otf
 </IfModule>
 
 # Los assets llevan hash en el nombre: se pueden cachear de forma agresiva.

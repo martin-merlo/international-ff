@@ -7,14 +7,15 @@ import opDhl from "@/assets/op-dhl.png.asset.json";
 import opSomarco from "@/assets/op-somarco.png.asset.json";
 import opUps from "@/assets/op-ups.png.asset.json";
 import opMsc from "@/assets/op-msc.png.asset.json";
+import { assetUrl } from "@/lib/asset-url";
 
 const OPERATORS = [
-  { src: opItl.url, name: "International Trade Logistics" },
-  { src: opCcni.url, name: "CCNI" },
-  { src: opDhl.url, name: "DHL" },
-  { src: opSomarco.url, name: "Somarco" },
-  { src: opUps.url, name: "UPS" },
-  { src: opMsc.url, name: "MSC" },
+  { src: assetUrl(opItl.url), name: "International Trade Logistics" },
+  { src: assetUrl(opCcni.url), name: "CCNI" },
+  { src: assetUrl(opDhl.url), name: "DHL" },
+  { src: assetUrl(opSomarco.url), name: "Somarco" },
+  { src: assetUrl(opUps.url), name: "UPS" },
+  { src: assetUrl(opMsc.url), name: "MSC" },
 ];
 
 export function Footer() {
@@ -24,7 +25,7 @@ export function Footer() {
         <div>
           <div className="flex items-center gap-3">
             <img
-              src={logo.url}
+              src={assetUrl(logo.url)}
               alt="International Freight Forwarder"
               width={56}
               height={56}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { CONTACT } from "./data";
 import logo from "@/assets/logo-iff.png.asset.json";
+import { assetUrl } from "@/lib/asset-url";
 
 const LINKS = [
   { href: "#inicio", label: "Inicio" },
@@ -33,7 +34,7 @@ export function Header() {
       <div className="container-x grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-4">
         <a href="#inicio" className="flex min-w-0 items-center gap-3">
           <img
-            src={logo.url}
+            src={assetUrl(logo.url)}
             alt="International Freight Forwarder"
             width={56}
             height={56}

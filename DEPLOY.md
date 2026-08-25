@@ -4,7 +4,8 @@
 npm run build
 ```
 
-Genera `dist/` lista para subir por FTP o File Manager al `public_html` del hosting.
+Genera `dist/` lista para subir por FTP o File Manager. El contenido va a
+`public_html/new/lovable/dist/` (ver "Ruta base" más abajo: el sitio **no** va en la raíz).
 Incluir el `.htaccess` (es un archivo oculto: activá "mostrar archivos ocultos" en cPanel).
 
 ## Cómo funciona
@@ -23,20 +24,62 @@ necesita SSR ni router.
 > `scripts/build-static.mjs` (build SSR con preset `node-server` + crawl local) para
 > producir HTML estático. Esa infraestructura se eliminó al migrar a Vite + React puro.
 
-## Rutas y raíz del dominio
+## Ruta base: el sitio vive en una subcarpeta
 
-El HTML referencia los assets con rutas **absolutas** (`/assets/...`, `/images/...`), así
-que el contenido de `dist/` va en la **raíz** del dominio. Si algún día tuviera que
-colgar de un subdirectorio, hay que setear `base` en [vite.config.ts](vite.config.ts).
+El sitio **no** se sirve desde la raíz del dominio —ahí conviven otros sitios— sino desde:
+
+```
+https://www.internationalff.com/new/lovable/dist/
+```
+
+Esa ruta está **hardcodeada en tres lugares que tienen que coincidir sí o sí**:
+
+| Dónde | Qué dice | Para qué |
+| --- | --- | --- |
+| [vite.config.ts](vite.config.ts) | `const BASE = "/new/lovable/dist/"` (con barra final) | prefija todos los assets del build y alimenta `import.meta.env.BASE_URL` |
+| `.env` | `VITE_SITE_URL=https://www.internationalff.com/new/lovable/dist` (**sin** barra final) | arma las URLs absolutas de `og:image` / `twitter:image` |
+| [public/.htaccess](public/.htaccess) | `RewriteBase` y el destino del fallback | que las rutas desconocidas caigan en el `index.html` correcto |
+
+El build **falla** si `VITE_SITE_URL` y `base` apuntan a rutas distintas: es un error que de
+otro modo solo se notaría en producción, con los assets cargando de una carpeta y el preview
+de redes sociales de otra.
+
+### Cómo se referencian los archivos de `public/`
+
+Ninguna ruta a `public/` puede escribirse absoluta a mano (`/images/x.png` apuntaría a la
+raíz del dominio, o sea a otro sitio). Las reglas son:
+
+- **Desde TypeScript/JSX**: usar `assetUrl()` de [src/lib/asset-url.ts](src/lib/asset-url.ts),
+  que antepone `import.meta.env.BASE_URL` (ese valor ya trae la barra final). Los
+  `src/assets/*.asset.json` guardan la ruta **sin** barra inicial (`images/logo-iff.png`)
+  justo para eso.
+- **Desde `index.html`**: escribir la ruta absoluta normal (`/favicon.png`). Vite la reescribe
+  sola con el prefijo al buildear — verificado en el `dist/index.html` emitido.
+- **Desde `src/assets/`** (los JPG importados): no hace falta nada, Vite los procesa y
+  prefija solo.
+
+### El día que el sitio pase a la raíz del dominio
+
+Tres cambios y un rebuild:
+
+1. `vite.config.ts`: `const BASE = "/"`.
+2. `.env` y `.env.example`: `VITE_SITE_URL=https://www.internationalff.com`.
+3. `public/.htaccess`: `RewriteBase /` y `RewriteRule ^ /index.html [L]`.
+
+No hay que tocar ningún componente: `assetUrl()` y `BASE_URL` se ajustan solos. Si te olvidás
+de alguno de los dos primeros, el build corta con un mensaje que dice exactamente cuál.
 
 ## .htaccess
 
-Vive en [public/.htaccess](public/.htaccess) y el build lo copia a `dist/`. Hace dos cosas:
+Vive en [public/.htaccess](public/.htaccess) y el build lo copia a `dist/`. Hace:
 
-1. Sirve archivos y directorios reales tal cual.
-2. Cualquier otra ruta cae en `/index.html`.
-
-Más `Cache-Control` inmutable para los assets con hash y `no-cache` para el HTML.
+1. `RewriteBase /new/lovable/dist/`, porque el sitio cuelga de esa subcarpeta.
+2. Sirve archivos y directorios reales tal cual.
+3. Cualquier otra ruta cae en `/new/lovable/dist/index.html` — **nunca** en `/index.html`,
+   que es otro sitio.
+4. `mod_deflate` para comprimir HTML, CSS, JS, JSON, XML y SVG (los JPG/PNG ya vienen
+   comprimidos y se dejan pasar).
+5. `Cache-Control` inmutable para los assets con hash y `no-cache` para el HTML.
 
 ## Variables de entorno
 
@@ -62,8 +105,9 @@ Ya se extrajeron. Ahora:
 
 - Los binarios viven en `public/images/` y están commiteados. Se copian solos a
   `dist/images/` en el build.
-- Los `src/assets/*.asset.json` apuntan a `/images/<nombre>.png`. Los componentes siguen
-  importando esos JSON y leyendo `.url`, así que no se tocó ningún componente.
+- Los `src/assets/*.asset.json` guardan la ruta relativa `images/<nombre>.png` (sin barra
+  inicial) y los componentes la resuelven con `assetUrl()`, que le antepone la ruta base.
+  Ver "Ruta base" más arriba.
 - El repo ya no referencia rutas de assets de Lovable en ningún lado.
 
 | Origen | Archivo local | Usado en |
@@ -95,10 +139,11 @@ con el mismo script (camino de fetch directo, sin dev server) y quedó en
 Como `og:image` exige URL **absoluta**, se arma con la variable `VITE_SITE_URL`:
 
 ```
-VITE_SITE_URL=https://www.internationalff.com
+VITE_SITE_URL=https://www.internationalff.com/new/lovable/dist
 ```
 
-- Va en `.env` (ver [.env.example](.env.example)), sin barra final.
+- Va en `.env` (ver [.env.example](.env.example)), sin barra final, e incluye la subcarpeta.
+  Tiene que coincidir con `base` de vite.config.ts o el build corta.
 - Si falta o no es una URL absoluta, **el build se corta** con un mensaje explicativo, en
   vez de emitir metadatos rotos. La validación es un plugin de Vite con `apply: "build"`
   en [vite.config.ts](vite.config.ts), así que `vite dev` sigue arrancando sin la variable.
@@ -107,6 +152,6 @@ VITE_SITE_URL=https://www.internationalff.com
 
 ### Otros residuos del andamiaje original
 
-En el mismo `__root.tsx` se sacó el meta `twitter:site` (apuntaba a la cuenta del
-proveedor, no a la del cliente) y el `<html lang>` pasó de `en` a `es-AR`, que es el
-idioma real del sitio.
+Se sacó el meta `twitter:site` (apuntaba a la cuenta del proveedor, no a la del cliente) y
+el `<html lang>` pasó de `en` a `es-AR`, que es el idioma real del sitio. Ambos viven hoy
+en [index.html](index.html).
