@@ -360,6 +360,32 @@ function iff_import_default_image( $filename, $alt = '' ) {
 }
 
 /**
+ * En la portada se edita con el editor clásico, no con Gutenberg.
+ *
+ * El contenido propio de esa página no se usa: front-page.php arma la landing y
+ * nunca llama a the_content(). Lo único que hace falta editar ahí son los campos
+ * del tema.
+ *
+ * Cargar Gutenberg al pedo en esa pantalla es caro, y si la página venía armada
+ * con un maquetador del tema anterior, encima se suma ese plugin. Con el editor
+ * clásico la pantalla pesa una fracción y los campos se editan mejor.
+ *
+ * Solo aplica a la portada: el resto del sitio sigue con el editor de bloques.
+ *
+ * @param bool    $use_block_editor Si se usa el editor de bloques.
+ * @param WP_Post $post             Entrada que se está editando.
+ * @return bool
+ */
+function iff_classic_editor_for_front_page( $use_block_editor, $post ) {
+	if ( $post && (int) $post->ID === iff_content_post_id() ) {
+		return false;
+	}
+
+	return $use_block_editor;
+}
+add_filter( 'use_block_editor_for_post', 'iff_classic_editor_for_front_page', 10, 2 );
+
+/**
  * Acción manual para dejar la portada configurada desde el aviso del panel.
  *
  * @return void
