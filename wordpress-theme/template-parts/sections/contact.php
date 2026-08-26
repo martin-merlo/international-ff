@@ -141,6 +141,15 @@ $iff_input_class = 'mt-2 w-full rounded-xl border border-input bg-background px-
 					></textarea>
 				</div>
 			</div>
+			<?php // Trampa para bots: invisible y fuera del recorrido con teclado. ?>
+			<input
+				type="text"
+				name="website"
+				tabindex="-1"
+				autocomplete="off"
+				aria-hidden="true"
+				style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0"
+			/>
 			<button
 				type="submit"
 				class="mt-6 w-full rounded-full bg-navy px-6 py-4 text-sm font-bold text-primary-foreground transition-colors hover:bg-navy-deep"
@@ -149,6 +158,9 @@ $iff_input_class = 'mt-2 w-full rounded-xl border border-input bg-background px-
 			</button>
 			<p id="iff-form-sent" hidden class="mt-4 text-center text-sm font-semibold text-navy">
 				<?php echo esc_html( iff_content( 'form_sent_text' ) ); ?>
+			</p>
+			<p id="iff-form-error" hidden class="mt-4 text-center text-sm font-semibold text-destructive">
+				<?php echo esc_html( iff_content( 'form_error_text' ) ); ?>
 			</p>
 			<a
 				href="<?php echo esc_url( $iff_contact['whatsapp'] ); ?>"

@@ -30,6 +30,7 @@ const NON_UTILITY = new Set([
   "notice-success",
   "notice-error",
   "is-dismissible",
+  "notice-%s",
 ]);
 
 function walk(dir, out = []) {

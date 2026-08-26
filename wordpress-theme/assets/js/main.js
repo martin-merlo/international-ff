@@ -133,16 +133,24 @@
   }
 
   /* ---------------------------------------------------------------------
-   * 4. Formulario de contacto -> WhatsApp.
-   *    No se envía nada al servidor: se arma el mensaje y se abre wa.me,
-   *    igual que el onSubmit del original.
+   * 4. Formulario de contacto.
+   *
+   *    Abre WhatsApp con la consulta escrita (igual que el onSubmit original)
+   *    y, si está activado en el panel, manda además una copia por email.
+   *
+   *    El orden importa: WhatsApp se abre PRIMERO, en el mismo tick del clic.
+   *    Si se abriera después de esperar la respuesta del servidor, el navegador
+   *    lo tomaría como una ventana emergente no pedida por el usuario y la
+   *    bloquearía. El email sale después, en segundo plano.
    * ------------------------------------------------------------------ */
   function initContactForm() {
     var form = document.getElementById("iff-contact-form");
     if (!form) return;
 
     var sent = document.getElementById("iff-form-sent");
+    var error = document.getElementById("iff-form-error");
     var number = form.dataset.whatsappNumber;
+    var cfg = window.iffForm || {};
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -174,13 +182,54 @@
         .filter(Boolean)
         .join("\n");
 
-      window.open(
-        "https://wa.me/" + number + "?text=" + encodeURIComponent(texto),
-        "_blank",
-        "noopener,noreferrer"
-      );
+      if (cfg.openWhatsapp !== 0) {
+        window.open(
+          "https://wa.me/" + number + "?text=" + encodeURIComponent(texto),
+          "_blank",
+          "noopener,noreferrer"
+        );
+      }
 
+      if (error) error.hidden = true;
       if (sent) sent.hidden = false;
+
+      if (!cfg.sendEmail || !cfg.ajaxUrl || !window.fetch) return;
+
+      var payload = new FormData();
+      payload.append("action", cfg.action);
+      payload.append("nonce", cfg.nonce);
+      payload.append("nombre", nombre);
+      payload.append("email", email);
+      payload.append("telefono", telefono);
+      payload.append("servicio", servicio);
+      payload.append("mensaje", mensaje);
+      payload.append("website", val("website", 100)); // trampa para bots
+
+      fetch(cfg.ajaxUrl, {
+        method: "POST",
+        body: payload,
+        credentials: "same-origin",
+      })
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (res) {
+          if (res && res.success) {
+            form.reset();
+            return;
+          }
+          // El correo no salió, pero la consulta ya se fue por WhatsApp.
+          if (error && cfg.openWhatsapp === 0) {
+            if (sent) sent.hidden = true;
+            error.hidden = false;
+          }
+        })
+        .catch(function () {
+          if (error && cfg.openWhatsapp === 0) {
+            if (sent) sent.hidden = true;
+            error.hidden = false;
+          }
+        });
     });
   }
 

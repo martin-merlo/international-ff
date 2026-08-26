@@ -107,6 +107,31 @@ function iff_content( $key, $fallback = null ) {
 }
 
 /**
+ * Valor de un campo de tipo interruptor (sí/no).
+ *
+ * @param string $key Clave del campo.
+ * @return bool
+ */
+function iff_flag( $key ) {
+	$value = iff_raw( $key );
+
+	if ( null === $value ) {
+		// ACF guarda los interruptores como "0", que iff_raw() no distingue de
+		// vacío; si el campo existe pero está apagado, hay que respetarlo.
+		if ( iff_acf_ready() ) {
+			$raw = get_field( $key, iff_content_post_id() );
+			if ( null !== $raw && '' !== $raw ) {
+				return (bool) $raw;
+			}
+		}
+
+		return (bool) iff_default( $key );
+	}
+
+	return (bool) $value;
+}
+
+/**
  * Campo de tipo lista (un ítem por línea).
  *
  * @param string $key Clave del campo.

@@ -45,6 +45,19 @@ function iff_enqueue_assets() {
 		file_exists( $js_path ) ? (string) filemtime( $js_path ) : IFF_VERSION,
 		true
 	);
+
+	// Datos que el formulario de contacto necesita para enviar la copia por email.
+	wp_localize_script(
+		'iff-main',
+		'iffForm',
+		array(
+			'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
+			'action'       => IFF_FORM_ACTION,
+			'nonce'        => wp_create_nonce( IFF_FORM_ACTION ),
+			'sendEmail'    => iff_flag( 'form_email_enabled' ) ? 1 : 0,
+			'openWhatsapp' => iff_flag( 'form_open_whatsapp' ) ? 1 : 0,
+		)
+	);
 }
 add_action( 'wp_enqueue_scripts', 'iff_enqueue_assets' );
 

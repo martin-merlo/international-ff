@@ -16,6 +16,7 @@ require_once get_template_directory() . '/inc/content-schema.php';
 require_once get_template_directory() . '/inc/content.php';
 require_once get_template_directory() . '/inc/acf-fields.php';
 require_once get_template_directory() . '/inc/acf-setup.php';
+require_once get_template_directory() . '/inc/contact-form.php';
 require_once get_template_directory() . '/inc/icons.php';
 require_once get_template_directory() . '/inc/enqueue.php';
 

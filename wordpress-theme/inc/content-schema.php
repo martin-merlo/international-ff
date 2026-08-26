@@ -755,6 +755,43 @@ function iff_content_schema() {
 					'type'    => 'text',
 					'default' => 'Escribir por WhatsApp',
 				),
+				'form_open_whatsapp'  => array(
+					'label'        => 'Al enviar, abrir WhatsApp',
+					'type'         => 'toggle',
+					'instructions' => 'Activado: al enviar se abre WhatsApp con la consulta escrita. Desactivalo si preferís recibir las consultas solo por email.',
+					'default'      => 1,
+				),
+				'form_email_enabled'  => array(
+					'label'        => 'Enviar las consultas por email',
+					'type'         => 'toggle',
+					'instructions' => 'Manda un correo con los datos del formulario a la casilla de abajo.',
+					'default'      => 1,
+				),
+				'form_email_to'       => array(
+					'label'        => 'Recibir las consultas en',
+					'type'         => 'text',
+					'instructions' => 'Casilla donde llegan las consultas. Se pueden poner varias separadas por coma. Vacío = el email del administrador del sitio.',
+					'default'      => 'martinmerlo360@gmail.com',
+					'optional'     => true,
+				),
+				'form_email_subject'  => array(
+					'label'        => 'Asunto del email',
+					'type'         => 'text',
+					'instructions' => 'Se le agrega el nombre de quien consulta.',
+					'default'      => 'Nueva consulta desde el sitio',
+				),
+				'form_email_from'     => array(
+					'label'        => 'Dirección remitente',
+					'type'         => 'text',
+					'instructions' => 'IMPORTANTE: tiene que ser una casilla de tu propio dominio (por ejemplo no-reply@internationalff.com). Si acá ponés un Gmail o Hotmail, los correos van a caer en spam. Vacío = se arma solo con el dominio del sitio.',
+					'default'      => '',
+					'optional'     => true,
+				),
+				'form_error_text'     => array(
+					'label'   => 'Formulario: mensaje si el envío falla',
+					'type'    => 'textarea',
+					'default' => 'No pudimos enviar la consulta por email. Escribinos por WhatsApp con el botón de abajo.',
+				),
 			),
 		),
 

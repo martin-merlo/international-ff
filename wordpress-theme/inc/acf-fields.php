@@ -134,6 +134,13 @@ function iff_acf_build_field( $key, $field, $prefix = 'field_iff_' ) {
 				'ui'            => 1,
 			);
 
+		case 'toggle':
+			return $base + array(
+				'type'          => 'true_false',
+				'ui'            => 1,
+				'default_value' => ! empty( $field['default'] ) ? 1 : 0,
+			);
+
 		case 'text':
 		default:
 			return $base + array(
